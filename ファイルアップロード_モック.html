@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>添付ファイル登録｜Beisia 販促ポータル</title>
+<style>
+  :root{--brand:#e60012;--brand-dark:#b8000e;--brand-soft:#fff0f1;--ink:#1a1a1a;--muted:#6b7280;--line:#e5e7eb;--bg:#f4f6f9;--ok:#0a8f4f;--ok-soft:#e8f7ef;--sf:#00a1e0;--tr:#7c3aed;--shadow:0 6px 24px rgba(20,20,40,.08)}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:14px;-webkit-font-smoothing:antialiased}
+  .demo-banner{background:linear-gradient(90deg,var(--brand),#ff5a4d);color:#fff;text-align:center;font-size:12px;padding:6px;font-weight:700}
+  .userbar{background:#0f172a;color:#cbd5e1;font-size:12px}.userbar-in{max-width:980px;margin:0 auto;padding:7px 22px;display:flex;align-items:center;gap:10px}
+  .userbar .tr{background:var(--tr);color:#fff;font-weight:800;padding:2px 9px;border-radius:6px;font-size:11px}.userbar .uname{font-weight:700;color:#fff}.userbar a{margin-left:auto;color:#93c5fd;text-decoration:none;font-weight:700}
+  .site-header{background:#fff;border-bottom:1px solid var(--line)}.header-inner{max-width:980px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+  .logo{font-weight:900;font-size:19px;color:var(--brand);display:flex;align-items:center;gap:10px}.logo .mark{background:var(--brand);color:#fff;border-radius:8px;padding:4px 9px;font-size:15px}
+  .header-sub{font-size:11.5px;color:var(--muted);margin-left:auto;text-align:right;line-height:1.3}
+  .wrap{max-width:980px;margin:0 auto;padding:20px 22px 80px}
+  h1.page{font-size:21px;margin:0 0 3px}.page-sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:18px 20px;margin-bottom:18px}
+  .card h2{font-size:15px;margin:0 0 14px;display:flex;align-items:center;gap:8px}.card h2 .step-no{background:var(--brand);color:#fff;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800}
+
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .toolbar input[type=search]{width:230px;padding:9px 12px;border:1px solid #d4d9e0;border-radius:9px;font-size:13.5px}
+  .toolbar select{padding:9px 11px;border:1px solid #d4d9e0;border-radius:9px;font-size:13.5px;background:#fff}
+  table.list{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table.list th,table.list td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left}
+  table.list thead th{background:#f3f5f8;font-size:12px;color:#374151}table.list tr:hover td{background:#fbfbfc}
+  .pill{font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--brand-soft);color:var(--brand-dark);white-space:nowrap}
+  .filecnt{font-size:11px;font-weight:800;color:#0077a8;background:#e8f7fd;padding:2px 9px;border-radius:999px}
+  .btn-row{border:none;background:var(--brand);color:#fff;border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit}.btn-row:hover{background:var(--brand-dark)}
+
+  .meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 22px;font-size:13px}.meta-grid .m{display:flex;gap:8px}.meta-grid .k{color:var(--muted);min-width:78px}.meta-grid .v{font-weight:700}
+  .drop{border:2px dashed #c7ccd4;border-radius:14px;padding:28px 20px;text-align:center;transition:.18s;background:#fcfcfd;cursor:pointer}.drop.over{border-color:var(--brand);background:var(--brand-soft)}
+  .drop .ic{font-size:32px}.drop .t{font-weight:800;margin-top:6px}.drop .s{font-size:12px;color:var(--muted);margin-top:4px}.drop input[type=file]{display:none}
+  .files{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .file{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:#fff}.file.existing{background:#f7f8fa}
+  .thumb{width:46px;height:46px;border-radius:8px;flex:none;background:#eef1f5;display:grid;place-items:center;color:var(--muted);font-size:11px;font-weight:800;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}
+  .file .info{flex:1;min-width:0}.file .fn{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file .fs{font-size:11.5px;color:var(--muted)}
+  .file .tag{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px;background:var(--ok-soft);color:var(--ok)}.file .tag.new{background:#e8f1ff;color:#1f6feb}
+  .file .del{border:none;background:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px;border-radius:6px}.file .del:hover{background:#fbeaec;color:var(--brand)}
+  .actions{display:flex;justify-content:flex-end;gap:12px;margin-top:8px}
+  .btn{border:none;border-radius:10px;padding:13px 28px;font-size:14.5px;font-weight:800;cursor:pointer;font-family:inherit}.btn-primary{background:var(--brand);color:#fff}.btn-primary:hover{background:var(--brand-dark)}.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .empty{color:var(--muted);font-size:12.5px;padding:8px 0}
+  .note{background:var(--ok-soft);border:1px solid #bfe6cf;color:#0a6b3d;border-radius:10px;padding:10px 14px;font-size:12.5px;margin-top:14px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:50}.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="demo-banner">DEMO ／ ベイシア様ご提案用 ｜ 添付ファイル登録（申請済みリストから1申請ごとに一括添付）・PC</div>
+<div class="userbar"><div class="userbar-in"><span class="tr">Task Relay</span><span>ログイン中：</span><span class="uname">田中 太郎（販売部）</span><a href="index.html">ログアウト</a></div></div>
+<header class="site-header"><div class="header-inner"><div class="logo"><span class="mark">B</span>Beisia 販促ポータル</div><div class="header-sub">Experience Cloud ｜ Task Relay 連携<br>添付ファイル運用</div></div></header>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUBMITTED=[
+  {id:'TR-3021',type:'アンカーPOP申請',title:'UVカットジャケット ほか',owner:'鈴木 一郎',deliv:'2026-05-14',files:[{name:'店頭イメージ_婦人売場.jpg',size:248000,img:true},{name:'商品パット_UV.pdf',size:512000,img:false}]},
+  {id:'TR-3025',type:'オネストカード申請',title:'オレンジ100%果汁 価格改定',owner:'佐藤 花子',deliv:'2026-06-14',files:[{name:'価格改定_定型文.docx',size:38000,img:false}]},
+  {id:'TR-3030',type:'媒体申請',title:'国産豚ロース 特売',owner:'田中 太郎',deliv:'2026-06-18',files:[]},
+  {id:'TR-3034',type:'媒体申請',title:'PB プライスカード 春',owner:'小久保',deliv:'2026-06-25',files:[{name:'PBロゴ_春.ai',size:920000,img:false}]},
+  {id:'TR-3022',type:'アンカーPOP申請',title:'カットソー長袖 BF先行',owner:'鈴木 一郎',deliv:'2026-05-14',files:[]},
+];
+let Q='',TF='',cur=null,added=[];
+const $=s=>document.querySelector(s);
+const kb=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).toFixed(1)+' MB';
+const WD=['日','月','火','水','木','金','土'];const wd=d=>{if(!d)return'';const x=new Date(d+'T00:00:00');return isNaN(x.getTime())?'':'（'+WD[x.getDay()]+'）';};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);}
+
+function renderList(){
+  const rows=SUBMITTED.filter(a=>{if(Q.trim()&&!(a.title.includes(Q)||a.id.includes(Q)))return false;if(TF&&a.type!==TF)return false;return true;}).map(a=>`
+    <tr><td>${a.id}</td><td><span class="pill">${a.type.replace('申請','')}</span></td><td>${a.title}</td><td>${a.owner}</td>
+      <td style="text-align:center"><span class="filecnt">${a.files.length} 件</span></td>
+      <td style="text-align:right"><button class="btn-row" data-go="${a.id}">ファイル添付 ▶</button></td></tr>`).join('');
+  $('#app').innerHTML=`
+    <h1 class="page">添付ファイル登録</h1>
+    <p class="page-sub">3種の申請（媒体／アンカーPOP／オネスト）の申請済みリストから1件を選び、画像・商品パット等を<b>まとめて追加添付</b>します。申請番号（ユニークキー）に紐づけて履歴管理します。</p>
+    <div class="toolbar"><input type="search" id="q" placeholder="🔍 件名・申請番号で検索" value="${Q}"><select id="tf"><option value="">全種別</option>${['媒体申請','アンカーPOP申請','オネストカード申請'].map(t=>`<option ${TF===t?'selected':''}>${t}</option>`).join('')}</select></div>
+    <table class="list"><thead><tr><th>申請番号</th><th>種別</th><th>件名</th><th>申請者</th><th style="text-align:center">添付</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">該当する申請がありません</td></tr>`}</tbody></table>`;
+  $('#q').oninput=e=>{Q=e.target.value;const p=e.target.selectionStart;renderList();const n=$('#q');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(x){}}};
+  $('#tf').onchange=e=>{TF=e.target.value;renderList();};
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{cur=SUBMITTED.find(a=>a.id===b.dataset.go);added=[];renderDetail();});
+}
+
+function renderDetail(){
+  const a=cur;
+  $('#app').innerHTML=`
+    <h1 class="page">ファイル添付 ｜ ${a.id}</h1>
+    <p class="page-sub">この申請にファイルをまとめて追加します。</p>
+    <div class="card"><h2><span class="step-no">1</span>対象申請</h2>
+      <div class="meta-grid"><div class="m"><span class="k">申請番号</span><span class="v">${a.id}</span></div><div class="m"><span class="k">種別</span><span class="v"><span class="pill">${a.type.replace('申請','')}</span></span></div><div class="m"><span class="k">件名</span><span class="v">${a.title}</span></div><div class="m"><span class="k">申請者</span><span class="v">${a.owner}</span></div><div class="m"><span class="k">納品日</span><span class="v">${a.deliv}${wd(a.deliv)}</span></div></div>
+    </div>
+    <div class="card"><h2><span class="step-no">2</span>ファイルをまとめて追加</h2>
+      <div class="drop" id="drop"><input type="file" id="file" multiple accept="image/*,.pdf,.docx,.xlsx,.ai,.psd"><div class="ic">📎</div><div class="t">ここにファイルをドラッグ＆ドロップ</div><div class="s">またはクリックして複数選択（画像・PDF・Office・AI/PSD 等）</div></div>
+      <div class="files" id="files"></div>
+      <div class="note">💡 申請番号（ユニークキー）に紐づけて履歴管理。後日いつでも呼び出して追加添付できます。</div>
+      <div class="actions"><button class="btn btn-ghost" id="back">◀ 一覧へ戻る</button><button class="btn btn-primary" id="upload">この申請にまとめて登録 ✓</button></div>
+    </div>`;
+  renderFiles(); bindDetail();
+}
+function renderFiles(){
+  const ex=cur.files.map((f,i)=>fileRow(f,'existing',i)).join('');
+  const nw=added.map((f,i)=>fileRow(f,'new',i)).join('');
+  $('#files').innerHTML=(ex+nw)||'<div class="empty">添付ファイルはまだありません。</div>';
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{added.splice(+b.dataset.del,1);renderFiles();});
+}
+function fileRow(f,kind,i){const thumb=f.img&&f.url?`<img src="${f.url}">`:(f.img?'IMG':extOf(f.name));const tag=kind==='existing'?'<span class="tag">既存</span>':'<span class="tag new">追加</span>';const del=kind==='new'?`<button class="del" data-del="${i}" title="削除">×</button>`:'';return `<div class="file ${kind}"><div class="thumb">${thumb}</div><div class="info"><div class="fn">${f.name}</div><div class="fs">${kb(f.size)}</div></div>${tag}${del}</div>`;}
+function extOf(n){const m=n.split('.').pop().toUpperCase();return m.length<=4?m:'FILE';}
+function bindDetail(){
+  const drop=$('#drop'),input=$('#file');
+  drop.onclick=()=>input.click();
+  input.onchange=()=>{addFiles(input.files);input.value='';};
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+  drop.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+  $('#back').onclick=renderList;
+  $('#upload').onclick=()=>{if(!added.length){toast('追加するファイルを選択してください');return;}cur.files.push(...added.map(f=>({name:f.name,size:f.size,img:f.img,url:f.url})));const n=added.length;added=[];renderFiles();toast(`${n}件を ${cur.id} にまとめて登録しました`);};
+}
+function addFiles(list){[...list].forEach(f=>{const isImg=/^image\//.test(f.type);const obj={name:f.name,size:f.size,img:isImg,url:null};added.push(obj);if(isImg){const r=new FileReader();r.onload=e=>{obj.url=e.target.result;renderFiles();};r.readAsDataURL(f);}});renderFiles();toast(`${list.length}件を選択しました`);}
+renderList();
+</script>
+</body>
+</html>

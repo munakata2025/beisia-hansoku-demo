@@ -1,0 +1,5 @@
+# 公開対象は HTML デモのみ。元データ・提案書・録画などは公開しない
+*
+!.gitignore
+!.nojekyll
+!*.html

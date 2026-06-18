@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>媒体・販促 申請フォーム｜Beisia 販促ポータル</title>
+<style>
+  :root{
+    --brand:#e60012; --brand-dark:#b8000e; --brand-soft:#fff0f1;
+    --ink:#1a1a1a; --muted:#6b7280; --line:#e5e7eb; --bg:#f4f6f9;
+    --ok:#0a8f4f; --ok-soft:#e8f7ef; --sf:#00a1e0; --tr:#7c3aed;
+    --irr:#fff2d6; --irr-bd:#e0a300; --grid-line:#d7dce3; --cell-focus:#fff7d6;
+    --shadow:0 6px 24px rgba(20,20,40,.08);
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; font-size:14px; -webkit-font-smoothing:antialiased}
+  .demo-banner{background:linear-gradient(90deg,var(--brand),#ff5a4d); color:#fff; text-align:center; font-size:12px; padding:6px; font-weight:700}
+  /* ログインバー */
+  .userbar{background:#0f172a; color:#cbd5e1; font-size:12px}
+  .userbar-in{max-width:1240px; margin:0 auto; padding:7px 22px; display:flex; align-items:center; gap:10px}
+  .userbar .tr{background:var(--tr); color:#fff; font-weight:800; padding:2px 9px; border-radius:6px; font-size:11px}
+  .userbar .uname{font-weight:700; color:#fff}
+  .userbar a{margin-left:auto; color:#93c5fd; text-decoration:none; font-weight:700}
+  .userbar a:hover{text-decoration:underline}
+  .site-header{background:#fff; border-bottom:1px solid var(--line)}
+  .header-inner{max-width:1240px; margin:0 auto; padding:12px 22px; display:flex; align-items:center; gap:12px}
+  .logo{font-weight:900; font-size:19px; color:var(--brand); display:flex; align-items:center; gap:10px}
+  .logo .mark{background:var(--brand); color:#fff; border-radius:8px; padding:4px 9px; font-size:15px}
+  .header-sub{font-size:11.5px; color:var(--muted); margin-left:auto; text-align:right; line-height:1.3}
+  .wrap{max-width:1240px; margin:0 auto; padding:18px 22px 90px}
+
+  /* 種別タブ */
+  .tabs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap}
+  .tab{border:1.5px solid var(--line); background:#fff; border-radius:11px; padding:11px 20px; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; color:var(--muted); transition:.15s}
+  .tab:hover{border-color:var(--brand)}
+  .tab.on{background:var(--brand); border-color:var(--brand); color:#fff}
+
+  h1.page{font-size:20px; margin:0 0 3px}
+  .page-sub{color:var(--muted); font-size:13px; margin:0 0 16px}
+  .card{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); padding:18px 20px; margin-bottom:18px}
+  .card h2{font-size:15px; margin:0 0 14px; display:flex; align-items:center; gap:8px}
+  .card h2 .step-no{background:var(--brand); color:#fff; width:22px; height:22px; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:800}
+  .card h2 .note{font-weight:600; color:var(--muted); font-size:12px; margin-left:auto}
+
+  .info-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:13px}
+  .fld{display:flex; flex-direction:column; gap:4px}.fld.col2{grid-column:span 2}
+  .fld label{font-size:11.5px; font-weight:700; color:var(--muted)}
+  .fld label .req{color:#fff; background:var(--brand); font-size:9px; padding:0 5px; border-radius:3px; margin-left:5px}
+  input[type=text],input[type=number],input[type=date],select,textarea{width:100%; padding:8px 10px; border:1px solid #d4d9e0; border-radius:8px; font-size:13.5px; font-family:inherit; background:#fff}
+  textarea{resize:vertical; min-height:42px}
+  input:focus,select:focus,textarea:focus{outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(230,0,18,.1)}
+  .date-wrap{display:flex; align-items:center; gap:7px}.date-wrap input{flex:1}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  /* 日付（曜日）一体表示 */
+  .dpick{position:relative; display:flex; align-items:center; border:1px solid #d4d9e0; border-radius:8px; padding:8px 11px; background:#fff; cursor:pointer; min-height:38px}
+  .dpick:hover{border-color:#b9c0c9}
+  .dpick:focus-within{border-color:var(--brand); box-shadow:0 0 0 3px rgba(230,0,18,.1)}
+  .dpick .dval{font-size:13.5px; font-weight:600; font-variant-numeric:tabular-nums}
+  .dpick .dval.empty{color:#9aa3af; font-weight:400}
+  .dpick .dval.ok{color:var(--ok)}
+  .dpick .dval.ng{color:var(--brand-dark)}
+  .dpick::after{content:"📅"; margin-left:auto; font-size:13px; opacity:.6}
+  .dpick input[type=date]{position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; border:none; padding:0; margin:0}
+  .chips2{display:flex; gap:8px}
+  .chip2{border:1.5px solid #d4d9e0; border-radius:9px; padding:8px 16px; font-size:13px; font-weight:700; cursor:pointer}
+  .chip2.on{background:var(--brand); border-color:var(--brand); color:#fff}
+
+  /* 通常パターン */
+  .pattern{display:grid; grid-template-columns:repeat(7,1fr) auto; gap:10px; align-items:end}
+  .pattern.p7{grid-template-columns:repeat(7,1fr)}
+  /* パターン定義テーブル */
+  .ptbl{display:flex; flex-direction:column; gap:6px; margin-bottom:12px; overflow-x:auto}
+  .pthead,.ptrow{display:grid; grid-template-columns:160px repeat(7,minmax(56px,1fr)) 34px; gap:8px; align-items:center; min-width:680px}
+  .pthead{font-size:11px; font-weight:800; color:var(--muted); text-align:center}
+  .pthead .pname{text-align:left}
+  .ptrow input{padding:7px; font-size:13px; text-align:center; border:1px solid #d4d9e0; border-radius:7px}
+  .ptrow .pname{padding-left:4px}
+  .ptrow .pname input{text-align:left}
+  .ptrow.std{background:var(--brand-soft); border-radius:9px; padding:5px 4px}
+  .ptdel{border:none; background:#fbeaec; color:var(--brand); border-radius:6px; width:26px; height:26px; cursor:pointer; font-weight:800; font-family:inherit}
+  .btn-add2{border:1.5px dashed var(--brand); background:var(--brand-soft); color:var(--brand-dark); border-radius:9px; padding:9px 16px; font-size:13px; font-weight:800; cursor:pointer; font-family:inherit}
+  .btn-add2:hover{background:#ffe0e2}
+  .mini.accent2{background:#fff; border-color:var(--brand); color:var(--brand-dark)}
+  .mini.accent2:hover{background:var(--brand-soft)}
+  /* 割当グリッド */
+  td.mcell{font-variant-numeric:tabular-nums; color:#9aa3af; background:#fafbfc; min-width:48px}
+  td.mcell.has{color:var(--brand-dark); font-weight:700; background:#fff7f7}
+  select.psel{padding:6px 8px; border:1px solid #d4d9e0; border-radius:7px; font-size:12.5px; font-family:inherit; width:100%; font-weight:700}
+  .pat-col{display:flex; flex-direction:column; gap:4px}
+  .pat-col label{font-size:11.5px; font-weight:800; color:var(--brand-dark); text-align:center}
+  .pat-col input{text-align:center; padding:7px}
+  /* 明細定義 */
+  .items{display:grid; gap:10px}
+  .items.c5{grid-template-columns:repeat(5,1fr)} .items.c4{grid-template-columns:repeat(4,1fr)}
+  .item-col{border:1px solid var(--line); border-radius:10px; padding:10px; background:#fcfcfd}
+  .item-col .no{font-weight:800; color:var(--brand-dark); font-size:12.5px; margin-bottom:6px; display:flex; align-items:center; gap:6px}
+  .item-col .no .circ{background:var(--brand-soft); color:var(--brand-dark); width:20px; height:20px; border-radius:50%; display:grid; place-items:center; font-size:11px}
+  .item-col input,.item-col select{margin-bottom:6px; padding:6px 8px; font-size:12.5px}
+  .item-col .pr{display:flex; align-items:center; gap:4px}.item-col .pr span{font-size:11px; color:var(--muted)}
+
+  .toolbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:12px}
+  .toolbar input[type=search]{width:200px; padding:8px 11px; border:1px solid #d4d9e0; border-radius:8px; font-size:13px}
+  .toolbar select{width:auto; padding:8px 10px}
+  .mini{border:1px solid #d4d9e0; background:#fff; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap}
+  .mini:hover{background:var(--brand-soft)} .mini.accent{background:var(--brand); color:#fff; border-color:var(--brand)} .mini.accent:hover{background:var(--brand-dark)}
+  .sp{margin-left:auto}
+  .paste-tip{background:var(--ok-soft); border:1px solid #bfe6cf; color:#0a6b3d; border-radius:10px; padding:10px 14px; font-size:12.5px; margin-bottom:12px; display:flex; gap:8px}
+
+  .grid-scroll{max-height:58vh; overflow:auto; border:1px solid var(--grid-line); border-radius:10px}
+  table.grid{border-collapse:separate; border-spacing:0; width:100%; font-size:13px}
+  table.grid th,table.grid td{border-right:1px solid var(--grid-line); border-bottom:1px solid var(--grid-line); padding:0; text-align:center; background:#fff}
+  table.grid thead th{position:sticky; top:0; z-index:3; background:#f3f5f8; font-size:12px; font-weight:800; color:#374151; padding:8px 6px; white-space:nowrap}
+  table.grid thead th .sub{display:block; font-size:10.5px; color:var(--muted); font-weight:600}
+  .c-chk{position:sticky; left:0; z-index:2; background:#fff; min-width:34px}
+  .c-chk input{width:16px; height:16px; accent-color:var(--brand); cursor:pointer}
+  .c-sn{position:sticky; left:0; z-index:2; background:#fff; min-width:52px; font-size:11.5px; color:var(--muted)}
+  .c-nm{position:sticky; left:52px; z-index:2; background:#fff; min-width:92px; text-align:left; padding:0 10px!important; font-weight:600}
+  table.grid.haschk .c-sn{left:34px}
+  table.grid.haschk .c-nm{left:86px}
+  thead .c-chk,thead .c-sn,thead .c-nm,tfoot .c-chk,tfoot .c-sn,tfoot .c-nm{z-index:5}
+  tr.rsel-on td:not(.cell){background:#fff7f7}
+  /* 範囲選択 */
+  td.cell.sel{box-shadow:inset 0 0 0 1px #1f6feb}
+  td.cell.sel input{background:#eaf1ff}
+  .grid-scroll.noselect{user-select:none}
+  .grid-scroll.noselect input{pointer-events:none}
+  /* 地域ボタン */
+  .rgbar{display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-bottom:12px; font-size:12px}
+  .rgb{border:1px solid #d4d9e0; background:#fff; border-radius:999px; padding:5px 12px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit}
+  .rgb:hover{border-color:var(--brand)}
+  .rgb.on{background:var(--brand); border-color:var(--brand); color:#fff}
+  td.c-rg{min-width:54px}.c-rg .rg{font-size:10px; color:#fff; background:#9aa3af; border-radius:5px; padding:1px 7px}
+  td.cell{padding:0}
+  td.cell input{width:100%; height:34px; border:none; text-align:center; font-size:13.5px; background:transparent; font-variant-numeric:tabular-nums; -moz-appearance:textfield}
+  td.cell input::-webkit-outer-spin-button,td.cell input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
+  td.cell input:focus{outline:2px solid var(--brand); outline-offset:-2px; background:var(--cell-focus); position:relative; z-index:1}
+  td.cell.has input{background:#fff7f7; font-weight:700; color:var(--brand-dark)}
+  td.cell.irr input{background:var(--irr); color:#8a5a00; box-shadow:inset 0 0 0 2px var(--irr-bd)}
+  tr:hover td:not(.cell),tr:hover .c-sn,tr:hover .c-nm{background:#fbfbfc}
+  td.c-tot{min-width:60px; font-weight:800; background:#fafbfc; font-variant-numeric:tabular-nums}
+  table.grid tfoot td{position:sticky; bottom:0; z-index:3; background:#fff4f4; font-weight:800; padding:8px 6px; border-top:2px solid var(--brand)}
+  tfoot .lbl{text-align:right; padding-right:10px!important; color:var(--brand-dark)}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:11.5px; color:var(--muted)}
+  .legend i{display:inline-block; width:14px; height:14px; border-radius:3px; vertical-align:-2px; margin-right:5px}
+  .summary{display:flex; gap:20px; flex-wrap:wrap; margin-top:14px; padding:12px 16px; background:var(--brand-soft); border-radius:10px; font-size:13px}
+  .summary b{font-size:18px; color:var(--brand-dark)}.summary .s-item{display:flex; flex-direction:column}.summary .s-item span{font-size:11px; color:var(--muted)}
+
+  .actions{display:flex; justify-content:flex-end; gap:12px; margin-top:8px}
+  .btn{border:none; border-radius:10px; padding:13px 30px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; transition:.15s}
+  .btn-primary{background:var(--brand); color:#fff}.btn-primary:hover{background:var(--brand-dark)}
+  .btn-ghost{background:#fff; color:var(--ink); border:1px solid var(--line)}.btn-ghost:hover{background:var(--bg)}
+  .hint-key{font-size:11.5px; color:var(--muted); margin-right:auto; align-self:center}
+  .hint-key kbd{background:#eef1f5; border-radius:4px; padding:1px 6px; font-size:11px; border:1px solid #d4d9e0}
+
+  .sheet-table{width:100%; border-collapse:collapse; font-size:13px; margin-top:6px}
+  .sheet-table th,.sheet-table td{border:1px solid var(--grid-line); padding:7px 9px; text-align:center}
+  .sheet-table thead th{background:#f3f5f8; font-size:12px}.sheet-table td.nm{text-align:left}.sheet-table tfoot td{background:#fff4f4; font-weight:800}
+  .sheet-meta{display:grid; grid-template-columns:repeat(3,1fr); gap:10px 22px; margin-bottom:16px; font-size:13px}
+  .sheet-meta .m{display:flex; gap:8px}.sheet-meta .k{color:var(--muted); min-width:90px}.sheet-meta .v{font-weight:700}
+
+  .done-wrap{text-align:center; padding:14px 0}
+  .check{width:74px; height:74px; border-radius:50%; background:var(--ok); margin:0 auto 16px; display:grid; place-items:center; animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+  .ticket{text-align:left; background:#0f172a; color:#e2e8f0; border-radius:12px; padding:18px 20px; font-family:Consolas,monospace; font-size:13px; max-width:580px; margin:20px auto}
+  .ticket .tk-head{display:flex; gap:10px; margin-bottom:12px; border-bottom:1px solid #1e293b; padding-bottom:10px; align-items:center}
+  .ticket .tk-id{background:var(--brand); color:#fff; padding:2px 10px; border-radius:6px; font-weight:800}
+  .ticket .tk-status{margin-left:auto; color:#38d97f; font-weight:700}
+  .ticket .tk-line{display:flex; gap:8px; padding:2px 0}.ticket .tk-key{color:#7dd3fc; width:130px; flex:none}
+  .flow{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); margin-top:6px}
+  .flow .nd{background:#fff; border:1px solid var(--line); border-radius:8px; padding:7px 13px; font-weight:700; color:var(--ink)}.flow .ar{color:var(--brand); font-weight:900}
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#0f172a; color:#fff; padding:11px 20px; border-radius:10px; font-size:13px; font-weight:700; opacity:0; pointer-events:none; transition:.25s; z-index:50; max-width:90vw; text-align:center}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="demo-banner">DEMO ／ ベイシア様ご提案用 ｜ 媒体・販促 申請（Task Relayログイン・PC）</div>
+<div class="userbar"><div class="userbar-in"><span class="tr">Task Relay</span><span>ログイン中：</span><span class="uname" id="uname">田中 太郎（販売部）</span><a href="index.html">ログアウト</a></div></div>
+<header class="site-header"><div class="header-inner">
+  <div class="logo"><span class="mark">B</span>Beisia 販促ポータル</div>
+  <div class="header-sub">Experience Cloud ｜ Task Relay 連携<br>媒体・販促ツール申請</div>
+</div></header>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== 店舗マスタ（全141店・実装時160店規模） ===== */
+const _RAW=[
+ ['17','大間々','群馬'],['27','吉井','群馬'],['30','境野','群馬'],['170','更埴','長野'],['173','矢板','栃木'],['175','尾島','群馬'],['176','榛名','群馬'],['178','新里','群馬'],
+ ['179','渋川','群馬'],['180','寄居','埼玉'],['181','西部','群馬'],['182','赤堀','群馬'],['185','富士見','群馬'],['187','坂城','長野'],['300','沼田','群馬'],['303','高萩','茨城'],
+ ['306','大胡','群馬'],['309','佐久平','長野'],['312','今市','栃木'],['315','こもち','群馬'],['316','飯山','長野'],['317','富岡','群馬'],['318','前橋','群馬'],['319','安中','群馬'],
+ ['320','白河','福島'],['321','吾妻','群馬'],['322','宇都宮','栃木'],['323','月夜野','群馬'],['324','堀金','長野'],['325','玉造','茨城'],['326','烏山','栃木'],['327','安達','福島'],
+ ['328','豊栄','新潟'],['329','小千谷','新潟'],['330','鴨川','千葉'],['332','茂原','千葉'],['333','寄居北','埼玉'],['334','鶴ヶ島','埼玉'],['335','彦根','滋賀'],['337','栗橋','埼玉'],
+ ['338','富里','千葉'],['339','佐倉','千葉'],['340','東御','長野'],['341','ひだか','埼玉'],['342','市原','千葉'],['343','滑川','埼玉'],['344','長生','千葉'],['345','掛川','静岡'],
+ ['346','三好','愛知'],['347','氏家','栃木'],['348','大網','千葉'],['349','益子','栃木'],['350','古市場','群馬'],['351','野田','千葉'],['352','東金','千葉'],['353','大原','千葉'],
+ ['354','山梨','山梨'],['355','古河総','茨城'],['356','太田','群馬'],['357','前橋南','群馬'],['358','大泉','群馬'],['359','伊BP','群馬'],['360','流山','千葉'],['361','那須','栃木'],
+ ['362','常滑IC','愛知'],['363','木更津','千葉'],['364','本庄早','埼玉'],['365','千葉ニュ','千葉'],['366','真岡','栃木'],['367','深谷国','埼玉'],['368','富士吉田','山梨'],['369','川曲','福島'],
+ ['373','青梅','その他'],['374','石岡','茨城'],['375','藤枝','静岡'],['376','伊駅前','群馬'],['377','鳩山','埼玉'],['378','岩神','群馬'],['379','小山','栃木'],['380','都留','山梨'],
+ ['383','越生','埼玉'],['384','勝浦','千葉'],['385','小島田','長野'],['386','羽生','埼玉'],['387','花園','埼玉'],['388','新座','埼玉'],['389','三浦','その他'],['391','上尾','埼玉'],
+ ['392','潮来','茨城'],['393','成田','千葉'],['395','大田原','栃木'],['396','太田丸','群馬'],['397','阿見','茨城'],['398','倉賀野','群馬'],['399','津田沼','千葉'],['469','沼田','群馬'],
+ ['475','邑楽','群馬'],['476','今市','栃木'],['504','吉岡','群馬'],['505','吉田','長野'],['506','結城','茨城'],['507','甘楽','群馬'],['508','八街','千葉'],['509','八日','滋賀'],
+ ['510','日立','茨城'],['511','都田','静岡'],['512','蒲郡','愛知'],['513','雄踏','静岡'],['514','名古屋','愛知'],['516','上里','埼玉'],['517','豊岡','千葉'],['518','飯岡','千葉'],
+ ['519','嵐山','埼玉'],['520','小見川','千葉'],['521','行田','埼玉'],['522','甲賀','滋賀'],['523','川島','埼玉'],['524','川本','埼玉'],['525','御前崎','静岡'],['526','常滑','愛知'],
+ ['527','大平M','栃木'],['528','関','その他'],['529','大利根','埼玉'],['572','おおご','群馬'],['576','六供','群馬'],['578','安中','群馬'],['579','国定','群馬'],['581','吉見','埼玉'],
+ ['582','ひろせ','群馬'],['583','富沢','群馬'],['600','旭サン','千葉'],['601','中田島','静岡'],['602','長久手','愛知'],['604','館山','千葉'],['606','狭山','埼玉'],['607','東村山','その他'],
+ ['608','壬生','栃木'],['648','ときがわ','埼玉'],['649','借宿','長野'],['650','本庄児','埼玉'],['653','下道寺','栃木'],
+];
+const STORES=_RAW.map(r=>({sn:r[0],nm:r[1],rg:r[2]}));
+const REGIONS=['群馬','栃木','茨城','埼玉','千葉','長野','山梨','静岡','愛知','滋賀','福島','新潟','その他'];
+const SIZES=['大型','3尺','長尺','A3','A4','B6H','B8'];
+
+const $=s=>document.querySelector(s);
+const WD=['日','月','火','水','木','金','土'];
+const wdOf=d=>{if(!d)return'';const x=new Date(d+'T00:00:00');return isNaN(x.getTime())?'':WD[x.getDay()];};
+const wdSuffix=d=>{const w=wdOf(d);return w?`（${w}）`:'';};
+function wdBadge(id,val,restrict){const w=wdOf(val);if(!w)return `<span class="wd" id="${id}"></span>`;const ok=!restrict||w==='木'||w==='日';return `<span class="wd ${restrict?(ok?'wd-ok':'wd-ng'):''}" id="${id}">（${w}）${restrict&&!ok?' ※木日':''}</span>`;}
+const num=v=>{const n=parseInt(v,10);return isNaN(n)?0:n;};
+const fmt=n=>Number(n||0).toLocaleString();
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600);}
+
+/* ===== 種別定義（オネスト発注登録と同形式・項目違い） ===== */
+const TYPES={
+  media:{ name:'媒体申請', cellLabel:'枚数', gridTitle:'店舗別 媒体マトリクス入力', axisName:'媒体サイズ',
+    info:[ {id:'product',label:'商品名',type:'text',req:1},{id:'maker',label:'メーカー・産地',type:'text'},
+           {id:'appeal',label:'訴求ポイント',type:'textarea'},{id:'material',label:'媒体素材',type:'select',opts:['紙','合成紙','シール','吸着シート','ラミレス','その他']},
+           {id:'place',label:'取付場所',type:'text'},{id:'price',label:'売価（税抜）',type:'price'},{id:'margin',label:'荒利',type:'price'},
+           {id:'applicant',label:'申請者',type:'text',req:1},{id:'period',label:'掲載期間',type:'period'},{id:'delivDate',label:'納品日（木・日のみ）',type:'date',req:1,restrict:1} ],
+    infoDefault:{product:'国産豚ロース うす切り',maker:'群馬県産',appeal:'本日のお買い得 精肉特価',material:'合成紙',place:'精肉売場 平台エンド',price:398,margin:120,applicant:'田中 太郎',period_s:'2026-07-02',period_e:'2026-07-15',delivDate:'2026-06-18'},
+    grid:'fixed', sizes:SIZES, pattern:[1,2,1,2,3,2,4] },
+
+  anchor:{ name:'アンカーPOP申請', cellLabel:'枚数', gridTitle:'店舗別 発注数入力', axisName:'商品明細',
+    info:[ {id:'tax',label:'税率区分',type:'chips',opts:['8%（軽減）','10%'],req:1},{id:'mdtitle',label:'MDタイトル',type:'text'},
+           {id:'design',label:'デザインイメージ',type:'text'},{id:'applicant',label:'申請者',type:'text',req:1},
+           {id:'period',label:'販売期間',type:'period'},{id:'delivDate',label:'納品日（木・日のみ）',type:'date',req:1,restrict:1} ],
+    infoDefault:{tax:'10%',mdtitle:'ブラックフライデー',design:'BF指定デザイン',applicant:'鈴木 一郎',period_s:'2026-05-13',period_e:'2026-05-20',delivDate:'2026-05-14'},
+    grid:'detail', detailFields:[{k:'label',ph:'商品名'},{k:'popSize',sel:['A3H','A3','A4','B6H','B8','3尺','長尺']},{k:'price',ph:'単価',num:1},{k:'bonus',sel:['なし','1倍','2倍','3倍','5倍']}],
+    items:[ {label:'カットソー長袖 各種',popSize:'A3H',price:990,bonus:'1倍'},{label:'UVカットジャケット',popSize:'A3H',price:1500,bonus:'2倍'},{label:'',popSize:'A3H',price:0,bonus:'なし'},{label:'',popSize:'A3H',price:0,bonus:'なし'} ],
+    colSub:it=>`${it.popSize} @${fmt(it.price)}` },
+
+  honest:{ name:'オネストカード申請', cellLabel:'枚数', gridTitle:'店舗別 発注数入力', axisName:'明細①〜⑤',
+    info:[ {id:'comment',label:'コメント種類',type:'select',opts:['価格改定','欠品・品薄','数量制限','品質','その他'],req:1},{id:'product',label:'商品名',type:'text',req:1},
+           {id:'priceBefore',label:'本体価格（改定前）',type:'number'},{id:'priceAfter',label:'本体価格（改定後）',type:'number'},
+           {id:'size',label:'媒体サイズ',type:'select',opts:['B8','B6H','A4タテ','A4ヨコ','A3','長尺','その他']},{id:'applicant',label:'申請者',type:'text',req:1},
+           {id:'period',label:'取付期間',type:'period'},{id:'delivDate',label:'納品日（木・日のみ）',type:'date',req:1,restrict:1} ],
+    infoDefault:{comment:'価格改定',product:'ベイシア オレンジ100%果汁 900ml',priceBefore:199,priceAfter:299,size:'B6H',applicant:'佐藤 花子',period_s:'2026-06-18',period_e:'2026-07-05',delivDate:'2026-06-14'},
+    grid:'detail', detailFields:[{k:'label',ph:'内容'},{k:'price',ph:'単価',num:1}],
+    items:[ {label:'通常版',price:120},{label:'WK1 酒取扱あり',price:120},{label:'WK1 酒取扱なし',price:120},{label:'住関連 アプリP無',price:120},{label:'',price:0} ],
+    colSub:it=>`@${fmt(it.price)}円` },
+};
+
+let state={};
+let STORE_Q='', STORE_RG=[];
+let rowSel=new Set();
+let selA=null, selF=null, selecting=false;
+function setType(t){
+  const cfg=TYPES[t];
+  state={ type:t, cfg, info:Object.assign({},cfg.infoDefault),
+    items: cfg.grid==='detail'?JSON.parse(JSON.stringify(cfg.items)):[],
+    pattern: cfg.grid==='fixed'?cfg.pattern.slice():null,
+    irr:[], assign:{}, orders:{} };
+  STORE_Q=''; STORE_RG=[]; rowSel=new Set(); selA=selF=null;
+}
+
+/* 列定義（媒体＝固定7／明細＝labelありのみ） */
+function columns(){
+  if(state.cfg.grid==='fixed') return state.cfg.sizes.map((s,i)=>({key:i,label:s,sub:'標準 '+state.pattern[i],price:0}));
+  return state.items.map((it,i)=>({it,key:i})).filter(x=>x.it.label.trim()!=='').map(x=>({key:x.key,label:x.it.label,sub:state.cfg.colSub(x.it),price:num(x.it.price)}));
+}
+function isIrr(sn,key){if(state.cfg.grid!=='fixed')return false;const o=state.orders[sn];if(!o||o[key]==null||o[key]==='')return false;return num(o[key])!==num(state.pattern[key]);}
+function totals(){
+  const cols=columns(); const colq={}, colamt={}; cols.forEach(c=>{colq[c.key]=0;colamt[c.key]=0;});
+  let storeCnt=0,gq=0,ga=0,irrCnt=0;
+  for(const sn in state.orders){let rq=0,irr=false;cols.forEach(c=>{const q=num(state.orders[sn][c.key]);if(q>0){colq[c.key]+=q;colamt[c.key]+=q*c.price;rq+=q;}if(isIrr(sn,c.key))irr=true;});if(rq>0)storeCnt++;if(irr)irrCnt++;gq+=rq;}
+  ga=cols.reduce((a,c)=>a+colamt[c.key],0);
+  const hasPrice=cols.some(c=>c.price>0);
+  return {cols,colq,storeCnt,gq,ga,irrCnt,hasPrice};
+}
+function filteredStores(){const q=STORE_Q.trim();return STORES.filter(s=>{if(STORE_RG.length&&!STORE_RG.includes(s.rg))return false;if(q&&!(s.sn.includes(q)||s.nm.includes(q)))return false;return true;});}
+function regBtns(){return `<span style="font-weight:700;color:var(--muted)">地域：</span><button class="rgb ${STORE_RG.length===0?'on':''}" data-rg="__all">全地域</button>${REGIONS.map(r=>`<button class="rgb ${STORE_RG.includes(r)?'on':''}" data-rg="${r}">${r}</button>`).join('')}`;}
+function reGrid(){ if(state.cfg.grid==='fixed'){renderMediaRows();recalcMedia();} else {renderRows();recalc();} }
+function onChkAll(e){const on=e.target.checked;filteredStores().forEach(s=>{if(on)rowSel.add(s.sn);else rowSel.delete(s.sn);});reGrid();}
+
+/* ===== 媒体申請：通常／イレギュラーパターン × 店舗割当 ===== */
+function patterns(){return [{id:'std',name:'通常',vals:state.pattern}].concat(state.irr.map((p,i)=>({id:'i'+i,name:p.name||('イレギュラー'+(i+1)),vals:p.vals})));}
+function valsOf(id){const p=patterns().find(x=>x.id===id);return p?p.vals:null;}
+function mediaTotals(){const media=SIZES.map(()=>0);let cnt=0,gq=0;const byP={};patterns().forEach(p=>byP[p.id]=0);for(const sn in state.assign){const v=valsOf(state.assign[sn]);if(!v)continue;cnt++;byP[state.assign[sn]]=(byP[state.assign[sn]]||0)+1;v.forEach((q,i)=>{media[i]+=num(q);gq+=num(q);});}return {media,cnt,gq,byP};}
+
+function renderMediaEdit(){
+  const cfg=state.cfg;
+  $('#app').innerHTML=`
+    <div class="tabs">${Object.keys(TYPES).map(t=>`<button class="tab ${t===state.type?'on':''}" data-tab="${t}">${TYPES[t].name}</button>`).join('')}</div>
+    <h1 class="page">${cfg.name}</h1>
+    <p class="page-sub">媒体ごとの枚数は「通常パターン／イレギュラーパターン」で定義し、各店舗にパターンを割り当てます（店舗ごとの数値入力は不要）。</p>
+    <div class="card"><h2><span class="step-no">1</span>申請情報</h2><div class="info-grid">${cfg.info.map(hfield).join('')}</div></div>
+    <div class="card"><h2><span class="step-no">2</span>パターン定義（媒体別枚数）<span class="note">通常パターン＋必要に応じてイレギュラーパターンを追加</span></h2>
+      <div class="ptbl">
+        <div class="pthead"><span class="pname">パターン</span>${SIZES.map(s=>`<span>${s}</span>`).join('')}<span></span></div>
+        <div class="ptrow std"><span class="pname"><b>通常</b></span>${SIZES.map((s,i)=>`<input type="number" min="0" data-pat="${i}" value="${state.pattern[i]}">`).join('')}<span></span></div>
+        ${state.irr.map((p,i)=>`<div class="ptrow"><span class="pname"><input type="text" data-irrname="${i}" value="${p.name||''}" placeholder="イレギュラー${i+1}"></span>${SIZES.map((s,j)=>`<input type="number" min="0" data-irrval="${i}.${j}" value="${p.vals[j]}">`).join('')}<span><button class="ptdel" data-irrdel="${i}" title="削除">×</button></span></div>`).join('')}
+      </div>
+      <button class="btn-add2" id="addIrr">＋ イレギュラーパターンを追加</button>
+    </div>
+    <div class="card"><h2><span class="step-no">3</span>店舗へパターンを割り当て<span class="note">全${STORES.length}店</span></h2>
+      <div class="paste-tip">📋 <div><b>使い方：</b>左のチェックで店舗を選び、上のボタン（通常／イレギュラー／対象外）で<b>まとめて割り当て</b>。各行のプルダウンで個別変更もできます。</div></div>
+      <div class="toolbar">
+        <input type="search" id="q" placeholder="🔍 店番・店名で検索" value="${STORE_Q}">
+        <span style="font-size:12px;color:var(--muted);font-weight:700">チェック店舗を：</span>
+        ${patterns().map(p=>`<button class="mini accent2" data-assign="${p.id}">${p.name}に設定</button>`).join('')}
+        <button class="mini" data-assign="none">対象外</button>
+        <button class="mini sp" id="clr">割当クリア</button>
+      </div>
+      <div class="rgbar" id="rgbar"></div>
+      <div class="grid-scroll"><table class="grid haschk">
+        <thead><tr><th class="c-chk"><input type="checkbox" id="chkAll" title="表示中をすべて選択"></th><th class="c-sn">店番</th><th class="c-nm">店名</th><th>地域</th><th style="min-width:150px">適用パターン</th>${SIZES.map(s=>`<th>${s}</th>`).join('')}<th class="c-tot">計</th></tr></thead>
+        <tbody id="gbody"></tbody>
+        <tfoot><tr><td class="c-chk"></td><td class="c-sn"></td><td class="c-nm lbl">合計</td><td></td><td></td>${SIZES.map((s,i)=>`<td data-mt="${i}">0</td>`).join('')}<td class="c-tot" id="grandqty">0</td></tr></tfoot>
+      </table></div>
+      <div class="summary">
+        <div class="s-item"><span>対象店舗数</span><b id="sm-store">0</b></div>
+        <div class="s-item"><span>合計枚数</span><b id="sm-qty">0</b></div>
+        <div class="s-item"><span>パターン別店舗数</span><b id="sm-bp" style="font-size:13.5px">-</b></div>
+      </div>
+    </div>
+    <div class="actions"><button class="btn btn-ghost" id="clr2">割当クリア</button><button class="btn btn-primary" id="toSheet">登録 → 登録シートへ ▶</button></div>`;
+  renderMediaRows(); bindMedia(); recalcMedia();
+}
+function renderMediaRows(){
+  const ps=patterns();
+  const rows=filteredStores().map(s=>{
+    const cur=state.assign[s.sn]||'none';
+    const v=valsOf(state.assign[s.sn]);
+    const cells=SIZES.map((sz,i)=>`<td class="mcell ${v?'has':''}">${v?num(v[i]):''}</td>`).join('');
+    const tot=v?v.reduce((a,q)=>a+num(q),0):0;
+    const sel=`<select class="psel" data-psel="${s.sn}"><option value="none" ${cur==='none'?'selected':''}>対象外</option>${ps.map(p=>`<option value="${p.id}" ${cur===p.id?'selected':''}>${p.name}</option>`).join('')}</select>`;
+    return `<tr class="${rowSel.has(s.sn)?'rsel-on':''}"><td class="c-chk"><input type="checkbox" class="rsel" data-sn="${s.sn}" ${rowSel.has(s.sn)?'checked':''}></td><td class="c-sn">${s.sn}</td><td class="c-nm">${s.nm}</td><td class="c-rg"><span class="rg">${s.rg}</span></td><td>${sel}</td>${cells}<td class="c-tot">${tot||''}</td></tr>`;
+  }).join('')||`<tr><td colspan="${SIZES.length+6}" style="padding:20px;color:var(--muted)">該当する店舗がありません</td></tr>`;
+  $('#gbody').innerHTML=rows;
+}
+function recalcMedia(){
+  const t=mediaTotals();
+  SIZES.forEach((s,i)=>{const el=$(`[data-mt="${i}"]`);if(el)el.textContent=fmt(t.media[i]);});
+  if($('#grandqty'))$('#grandqty').textContent=fmt(t.gq);
+  if($('#sm-store'))$('#sm-store').textContent=fmt(t.cnt);
+  if($('#sm-qty'))$('#sm-qty').textContent=fmt(t.gq);
+  if($('#sm-bp'))$('#sm-bp').textContent=patterns().map(p=>`${p.name} ${t.byP[p.id]||0}店`).join(' ／ ');
+}
+function bindMedia(){
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{setType(b.dataset.tab);demoFill();renderEdit();});
+  document.querySelectorAll('[data-h]').forEach(el=>el.oninput=()=>{state.info[el.dataset.h]=el.value;});
+  document.querySelectorAll('.dpick input[type=date]').forEach(el=>el.onchange=()=>{const restrict=el.dataset.wd==='1';state.info[el.dataset.h]=el.value;const dv=el.closest('.dpick').querySelector('.dval');dv.textContent=fmtDateLabel(el.value,restrict);dv.className='dval '+dvalCls(el.value,restrict);});
+  document.querySelectorAll('.dpick').forEach(dp=>dp.onclick=()=>{const inp=dp.querySelector('input[type=date]');try{inp.showPicker();}catch(e){inp.focus();}});
+  document.querySelectorAll('[data-hchip]').forEach(el=>el.onclick=()=>{state.info[el.dataset.hchip]=el.dataset.v;renderEdit();});
+  document.querySelectorAll('[data-pat]').forEach(el=>el.oninput=()=>{state.pattern[+el.dataset.pat]=num(el.value);clearTimeout(window._p);window._p=setTimeout(()=>{renderMediaRows();recalcMedia();},300);});
+  document.querySelectorAll('[data-irrname]').forEach(el=>el.oninput=()=>{state.irr[+el.dataset.irrname].name=el.value;clearTimeout(window._i);window._i=setTimeout(()=>{renderMediaRows();recalcMedia();},400);});
+  document.querySelectorAll('[data-irrval]').forEach(el=>el.oninput=()=>{const a=el.dataset.irrval.split('.');state.irr[+a[0]].vals[+a[1]]=num(el.value);clearTimeout(window._p);window._p=setTimeout(()=>{renderMediaRows();recalcMedia();},300);});
+  document.querySelectorAll('[data-irrdel]').forEach(el=>el.onclick=()=>{const i=+el.dataset.irrdel,id='i'+i;Object.keys(state.assign).forEach(sn=>{if(state.assign[sn]===id)delete state.assign[sn];});state.irr.splice(i,1);renderMediaEdit();});
+  const ai=$('#addIrr');if(ai)ai.onclick=()=>{state.irr.push({name:'',vals:state.pattern.slice()});renderMediaEdit();};
+  document.querySelectorAll('[data-assign]').forEach(b=>b.onclick=()=>{const id=b.dataset.assign,sns=[...rowSel];if(!sns.length){toast('左のチェックで店舗を選択してください');return;}sns.forEach(sn=>{if(id==='none')delete state.assign[sn];else state.assign[sn]=id;});renderMediaRows();recalcMedia();toast(`${sns.length}店を「${id==='none'?'対象外':patterns().find(p=>p.id===id).name}」に設定`);});
+  const q=$('#q');q.oninput=()=>{STORE_Q=q.value;const p=q.selectionStart;renderMediaRows();recalcMedia();const n=$('#q');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(e){}}};
+  bindRegions();
+  const clr=()=>{if(confirm('店舗へのパターン割当をすべてクリアします。よろしいですか？')){state.assign={};renderMediaRows();recalcMedia();toast('クリアしました');}};
+  $('#clr').onclick=clr;$('#clr2').onclick=clr;
+  $('#toSheet').onclick=goSheet;
+  const ca=$('#chkAll');if(ca)ca.onchange=onChkAll;
+  const gb=$('#gbody');
+  gb.addEventListener('change',e=>{const el=e.target;
+    if(el.classList.contains('rsel')){const sn=el.dataset.sn;if(el.checked)rowSel.add(sn);else rowSel.delete(sn);el.closest('tr').classList.toggle('rsel-on',el.checked);return;}
+    if(el.classList.contains('psel')){const sn=el.dataset.psel;if(el.value==='none')delete state.assign[sn];else state.assign[sn]=el.value;renderMediaRows();recalcMedia();}
+  });
+}
+function renderMediaSheet(){
+  const cfg=state.cfg,t=mediaTotals(),ps=patterns();
+  const rows=STORES.filter(s=>valsOf(state.assign[s.sn])).map(s=>{const id=state.assign[s.sn],v=valsOf(id),pn=ps.find(p=>p.id===id).name;let tot=0;const tds=v.map(q=>{tot+=num(q);return `<td>${num(q)||''}</td>`;}).join('');return `<tr><td>${s.sn}</td><td class="nm">${s.nm}</td><td>${s.rg}</td><td>${pn}</td>${tds}<td><b>${tot}</b></td></tr>`;}).join('');
+  const colSum=t.media.map(m=>`<td>${fmt(m)}</td>`).join('');
+  const metas=cfg.info.map(f=>{let v;if(f.type==='period')v=`${state.info[f.id+'_s']||''}${wdSuffix(state.info[f.id+'_s'])} 〜 ${state.info[f.id+'_e']||''}${wdSuffix(state.info[f.id+'_e'])}`;else if(f.type==='date')v=`${state.info[f.id]||''}${wdSuffix(state.info[f.id])}`;else v=state.info[f.id]||'-';return `<div class="m"><span class="k">${f.label.replace(/（.*?）/,'')}</span><span class="v">${v}</span></div>`;}).join('');
+  $('#app').innerHTML=`
+    <h1 class="page">登録シート（内容確認）｜${cfg.name}</h1>
+    <p class="page-sub">以下の内容で登録します。送信と同時に Task Relay チケットが自動起票されます。</p>
+    <div class="card"><h2>申請情報</h2><div class="sheet-meta">${metas}</div>
+      <h2>店舗別 適用パターン（割当のあった店舗のみ）</h2>
+      <table class="sheet-table"><thead><tr><th>店番</th><th>店名</th><th>地域</th><th>パターン</th>${SIZES.map(s=>`<th>${s}</th>`).join('')}<th>計</th></tr></thead>
+        <tbody>${rows}</tbody><tfoot><tr><td colspan="4">合計枚数</td>${colSum}<td>${fmt(t.gq)}</td></tr></tfoot></table>
+      <div class="summary"><div class="s-item"><span>対象店舗数</span><b>${fmt(t.cnt)}</b></div><div class="s-item"><span>合計枚数</span><b>${fmt(t.gq)}</b></div><div class="s-item"><span>パターン別</span><b style="font-size:13.5px">${ps.map(p=>`${p.name} ${t.byP[p.id]||0}店`).join(' ／ ')}</b></div></div>
+    </div>
+    <div class="actions"><button class="btn btn-ghost" id="back">◀ 編集に戻る</button><button class="btn btn-primary" id="send">この内容で送信する ✓</button></div>`;
+  $('#back').onclick=renderEdit; $('#send').onclick=renderDone; window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===== 日付（曜日）一体コントロール ===== */
+function fmtDateLabel(v,restrict){
+  if(!v) return '日付を選択';
+  const [y,m,d]=v.split('-'); const w=wdOf(v);
+  const ok=!restrict||w==='木'||w==='日';
+  return `${+y}/${+m}/${+d}（${w}）${(restrict&&!ok)?' ※木・日のみ':''}`;
+}
+function dvalCls(v,restrict){if(!v)return 'empty';if(restrict){const w=wdOf(v);return (w==='木'||w==='日')?'ok':'ng';}return '';}
+function dpick(id,v,restrict){
+  return `<div class="dpick"><span class="dval ${dvalCls(v,restrict)}">${fmtDateLabel(v,restrict)}</span><input type="date" data-h="${id}" data-wd="${restrict?'1':''}" value="${v||''}"></div>`;
+}
+/* ===== 申請情報フィールド描画 ===== */
+function hfield(f){
+  const v=state.info[f.id]!=null?state.info[f.id]:'';
+  const lab=`<label>${f.label}${f.req?'<span class="req">必須</span>':''}</label>`;
+  let c='';
+  if(f.type==='text')c=`<input type="text" data-h="${f.id}" value="${v}" placeholder="${f.ph||''}">`;
+  else if(f.type==='textarea')c=`<textarea data-h="${f.id}" placeholder="${f.ph||''}">${v}</textarea>`;
+  else if(f.type==='number'||f.type==='price')c=`<input type="number" data-h="${f.id}" value="${v}" placeholder="0">`;
+  else if(f.type==='date')c=dpick(f.id,v,f.restrict);
+  else if(f.type==='select')c=`<select data-h="${f.id}">${f.opts.map(o=>`<option ${v===o?'selected':''}>${o}</option>`).join('')}</select>`;
+  else if(f.type==='chips')c=`<div class="chips2">${f.opts.map(o=>`<div class="chip2 ${v===o?'on':''}" data-hchip="${f.id}" data-v="${o}">${o}</div>`).join('')}</div>`;
+  else if(f.type==='period')c=`<div class="row2">${dpick(f.id+'_s',state.info[f.id+'_s'],false)}${dpick(f.id+'_e',state.info[f.id+'_e'],false)}</div>`;
+  const span=(f.type==='textarea'||f.type==='period')?'col2':'';
+  return `<div class="fld ${span}">${lab}${c}</div>`;
+}
+
+/* ===================== 編集ビュー ===================== */
+function renderEdit(){
+  if(state.cfg.grid==='fixed') return renderMediaEdit();
+  const cfg=state.cfg;
+  const defBlock = cfg.grid==='fixed'
+    ? `<div class="card"><h2><span class="step-no">2</span>通常パターン（フェア固定枚数）<span class="note">媒体ごとの既定枚数。グリッドでチェックした行へ「通常パターンをコピー」できます</span></h2>
+        <div class="pattern p7">${state.cfg.sizes.map((m,i)=>`<div class="pat-col"><label>${m}</label><input type="number" min="0" data-pat="${i}" value="${state.pattern[i]}"></div>`).join('')}</div></div>`
+    : `<div class="card"><h2><span class="step-no">2</span>明細の定義（${cfg.name==='アンカーPOP申請'?'商品・単価・POPサイズ':'内容・単価'}）</h2>
+        <div class="items ${state.items.length>=5?'c5':'c4'}">
+        ${state.items.map((it,i)=>`<div class="item-col"><div class="no"><span class="circ">${i+1}</span>明細 ${'①②③④⑤'[i]||(i+1)}</div>
+          ${cfg.detailFields.map(df=>{
+            if(df.sel) return `<select data-it="${i}.${df.k}">${df.sel.map(o=>`<option ${it[df.k]===o?'selected':''}>${o}</option>`).join('')}</select>`;
+            if(df.num) return `<div class="pr"><span>単価</span><input type="number" data-it="${i}.${df.k}" value="${it[df.k]||''}" placeholder="${df.ph||''}"><span>円</span></div>`;
+            return `<input type="text" data-it="${i}.${df.k}" value="${it[df.k]||''}" placeholder="${df.ph||''}">`;
+          }).join('')}</div>`).join('')}</div></div>`;
+
+  $('#app').innerHTML=`
+    <div class="tabs">${Object.keys(TYPES).map(t=>`<button class="tab ${t===state.type?'on':''}" data-tab="${t}">${TYPES[t].name}</button>`).join('')}</div>
+    <h1 class="page">${cfg.name}</h1>
+    <p class="page-sub">${cfg.name}に必要な項目を入力し、全店舗の${cfg.cellLabel}を1シートで登録。登録→登録シート確認→送信でTask Relayへ自動起票します。</p>
+
+    <div class="card"><h2><span class="step-no">1</span>申請情報</h2><div class="info-grid">${cfg.info.map(hfield).join('')}</div></div>
+
+    ${defBlock}
+
+    <div class="card">
+      <h2><span class="step-no">3</span>${cfg.gridTitle}<span class="note">全${STORES.length}店 × ${columns().length}${cfg.grid==='fixed'?'媒体':'明細'}</span></h2>
+      <div class="paste-tip">📋 <div><b>Excelコピペ対応：</b>Excelの範囲をコピー → 開始セルをクリックして <b>Ctrl+V</b>で貼付け（数値以外は自動除外）。グリッド上は<b>マウスドラッグで範囲選択 → Ctrl+C</b>でコピーできます。</div></div>
+      <div class="toolbar">
+        <input type="search" id="q" placeholder="🔍 店番・店名で検索" value="${STORE_Q}">
+        ${cfg.grid==='fixed'?'<button class="mini accent" id="copyPat">▣ 通常パターンを選択行にコピー</button>':''}
+        <button class="mini" id="copyCur">入力をコピー</button>
+        <button class="mini sp" id="clr">入力をクリア</button>
+      </div>
+      <div class="rgbar" id="rgbar"></div>
+      <div class="grid-scroll"><table class="grid ${cfg.grid==='fixed'?'haschk':''}">
+        <thead><tr>${cfg.grid==='fixed'?'<th class="c-chk"><input type="checkbox" id="chkAll" title="表示中をすべて選択"></th>':''}<th class="c-sn">店番</th><th class="c-nm">店名</th><th>地域</th>
+          ${columns().map(c=>`<th>${c.label}<span class="sub">${c.sub}</span></th>`).join('')}<th class="c-tot">店舗計</th></tr></thead>
+        <tbody id="gbody"></tbody>
+        <tfoot><tr>${cfg.grid==='fixed'?'<td class="c-chk"></td>':''}<td class="c-sn"></td><td class="c-nm lbl">合計</td><td></td>
+          ${columns().map(c=>`<td data-coltot="${c.key}">0</td>`).join('')}<td class="c-tot" id="grandqty">0</td></tr></tfoot>
+      </table></div>
+      ${cfg.grid==='fixed'?`<div class="legend"><span><i style="background:#fff7f7;border:1px solid var(--grid-line)"></i>入力あり（標準どおり）</span><span><i style="background:var(--irr);box-shadow:inset 0 0 0 2px var(--irr-bd)"></i>イレギュラー（標準と異なる）</span></div>`:''}
+      <div class="summary">
+        <div class="s-item"><span>入力店舗数</span><b id="sm-store">0</b></div>
+        <div class="s-item"><span>合計${cfg.cellLabel}</span><b id="sm-qty">0</b></div>
+        ${state.cfg.grid==='detail'?'<div class="s-item"><span>合計金額（税抜）</span><b id="sm-amt">0 円</b></div>':'<div class="s-item"><span>イレギュラー店舗</span><b id="sm-irr">0</b></div>'}
+      </div>
+    </div>
+
+    <div class="actions">
+      <span class="hint-key">セル移動：<kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd>／<kbd>Enter</kbd>下・<kbd>Tab</kbd>右／貼付け <kbd>Ctrl</kbd>+<kbd>V</kbd></span>
+      <button class="btn btn-ghost" id="clr2">クリア</button>
+      <button class="btn btn-primary" id="toSheet">登録 → 登録シートへ ▶</button>
+    </div>`;
+  renderRows(); bindEdit(); recalc();
+}
+
+function renderRows(){
+  const cols=columns(); const chk=state.cfg.grid==='fixed';
+  const rows=filteredStores().map((s,r)=>{
+    const o=state.orders[s.sn]||{};
+    const cells=cols.map((c,ci)=>{const v=(o[c.key]!=null&&o[c.key]!=='')?o[c.key]:'';const cl=(v!==''?'has ':'')+(isIrr(s.sn,c.key)?'irr':'');
+      return `<td class="cell ${cl}"><input type="number" min="0" class="ic" data-r="${r}" data-c="${ci}" data-sn="${s.sn}" data-key="${c.key}" value="${v}"></td>`;}).join('');
+    const chkTd = chk?`<td class="c-chk"><input type="checkbox" class="rsel" data-sn="${s.sn}" ${rowSel.has(s.sn)?'checked':''}></td>`:'';
+    return `<tr class="${rowSel.has(s.sn)?'rsel-on':''}">${chkTd}<td class="c-sn">${s.sn}</td><td class="c-nm">${s.nm}</td><td class="c-rg"><span class="rg">${s.rg}</span></td>${cells}<td class="c-tot" data-rowtot="${s.sn}">0</td></tr>`;
+  }).join('') || `<tr><td colspan="${cols.length+(chk?5:4)}" style="padding:20px;color:var(--muted)">該当する店舗がありません</td></tr>`;
+  $('#gbody').innerHTML=rows;
+}
+function recalc(){
+  const t=totals();
+  t.cols.forEach(c=>{const el=$(`[data-coltot="${c.key}"]`);if(el)el.textContent=fmt(t.colq[c.key]);});
+  const gq=$('#grandqty');if(gq)gq.textContent=fmt(t.gq);
+  document.querySelectorAll('[data-rowtot]').forEach(el=>{const sn=el.dataset.rowtot,o=state.orders[sn]||{};let s=0;t.cols.forEach(c=>s+=num(o[c.key]));el.textContent=fmt(s);});
+  if($('#sm-store'))$('#sm-store').textContent=fmt(t.storeCnt);
+  if($('#sm-qty'))$('#sm-qty').textContent=fmt(t.gq);
+  if($('#sm-amt'))$('#sm-amt').textContent=fmt(t.ga)+' 円';
+  if($('#sm-irr'))$('#sm-irr').textContent=fmt(t.irrCnt);
+}
+function refreshCell(td,sn,key){const inp=td.querySelector('input');td.classList.toggle('has',inp.value!=='');td.classList.toggle('irr',isIrr(sn,key));}
+
+function bindRegions(){
+  const bar=$('#rgbar'); if(!bar) return;
+  bar.innerHTML=regBtns();
+  bar.querySelectorAll('[data-rg]').forEach(b=>b.onclick=()=>{const r=b.dataset.rg;if(r==='__all')STORE_RG=[];else{const i=STORE_RG.indexOf(r);if(i>=0)STORE_RG.splice(i,1);else STORE_RG.push(r);}bindRegions();reGrid();});
+}
+function bindEdit(){
+  selA=selF=null;
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{setType(b.dataset.tab);demoFill();renderEdit();});
+  document.querySelectorAll('[data-h]').forEach(el=>el.oninput=()=>{state.info[el.dataset.h]=el.value;});
+  document.querySelectorAll('.dpick input[type=date]').forEach(el=>el.onchange=()=>{const restrict=el.dataset.wd==='1';state.info[el.dataset.h]=el.value;const dv=el.closest('.dpick').querySelector('.dval');dv.textContent=fmtDateLabel(el.value,restrict);dv.className='dval '+dvalCls(el.value,restrict);});
+  document.querySelectorAll('.dpick').forEach(dp=>dp.onclick=()=>{const inp=dp.querySelector('input[type=date]');try{inp.showPicker();}catch(e){inp.focus();}});
+  document.querySelectorAll('[data-hchip]').forEach(el=>el.onclick=()=>{state.info[el.dataset.hchip]=el.dataset.v;renderEdit();});
+  document.querySelectorAll('[data-it]').forEach(el=>el.oninput=el.onchange=()=>{const [i,k]=el.dataset.it.split('.');state.items[+i][k]=(k==='price')?num(el.value):el.value;clearTimeout(window._h);window._h=setTimeout(()=>{updateHeader();renderRows();recalc();},350);});
+  document.querySelectorAll('[data-pat]').forEach(el=>el.oninput=()=>{state.pattern[+el.dataset.pat]=num(el.value);clearTimeout(window._p);window._p=setTimeout(()=>{updateHeader();renderRows();recalc();},350);});
+  const cpat=$('#copyPat'); if(cpat) cpat.onclick=()=>{const sns=[...rowSel];if(!sns.length){toast('左のチェックボックスで行を選択してください');return;}sns.forEach(sn=>{state.orders[sn]=state.orders[sn]||{};state.cfg.sizes.forEach((_,i)=>state.orders[sn][i]=String(state.pattern[i]));});renderRows();recalc();toast(`${sns.length}行に通常パターンをコピーしました`);};
+  const q=$('#q');q.oninput=()=>{STORE_Q=q.value;const p=q.selectionStart;renderRows();recalc();const n=$('#q');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(e){}}};
+  bindRegions();
+  const clr=()=>{if(confirm('入力した'+state.cfg.cellLabel+'をすべてクリアします。よろしいですか？')){state.orders={};renderRows();recalc();toast('クリアしました');}};
+  $('#clr').onclick=clr;$('#clr2').onclick=clr;
+  $('#copyCur').onclick=()=>{copyText(gridTSV());toast('入力をコピーしました（Excelに貼付け可）');};
+  $('#toSheet').onclick=goSheet;
+  const ca=$('#chkAll'); if(ca) ca.onchange=onChkAll;
+  const gb=$('#gbody');
+  gb.addEventListener('input',e=>{const el=e.target;if(!el.classList.contains('ic'))return;const sn=el.dataset.sn,key=+el.dataset.key;state.orders[sn]=state.orders[sn]||{};state.orders[sn][key]=el.value;refreshCell(el.closest('td'),sn,key);recalc();});
+  gb.addEventListener('change',e=>{const el=e.target;if(!el.classList.contains('rsel'))return;const sn=el.dataset.sn;if(el.checked)rowSel.add(sn);else rowSel.delete(sn);el.closest('tr').classList.toggle('rsel-on',el.checked);});
+  gb.addEventListener('keydown',e=>{const el=e.target;if(!el.classList.contains('ic'))return;const r=+el.dataset.r,c=+el.dataset.c;const go=(nr,nc)=>{const t=gb.querySelector(`.ic[data-r="${nr}"][data-c="${nc}"]`);if(t){e.preventDefault();t.focus();t.select();}};if(e.key==='Enter'||e.key==='ArrowDown')go(r+1,c);else if(e.key==='ArrowUp')go(r-1,c);else if(e.key==='ArrowRight'&&el.selectionStart===el.value.length)go(r,c+1);else if(e.key==='ArrowLeft'&&el.selectionStart===0)go(r,c-1);});
+  gb.addEventListener('paste',handlePaste);
+  // マウスドラッグで範囲選択
+  gb.addEventListener('mousedown',e=>{const inp=e.target.closest('.ic');if(!inp)return;selecting=true;selA={r:+inp.dataset.r,c:+inp.dataset.c};selF={r:selA.r,c:selA.c};paintSel();});
+  gb.addEventListener('mouseover',e=>{if(!selecting)return;const td=e.target.closest('td.cell');if(!td)return;const inp=td.querySelector('.ic');if(!inp)return;const nf={r:+inp.dataset.r,c:+inp.dataset.c};if(nf.r!==selF.r||nf.c!==selF.c){selF=nf;const gs=document.querySelector('.grid-scroll');if(gs)gs.classList.add('noselect');paintSel();}});
+}
+function paintSel(){
+  document.querySelectorAll('td.cell.sel').forEach(td=>td.classList.remove('sel'));
+  if(!selA||!selF)return;
+  const r1=Math.min(selA.r,selF.r),r2=Math.max(selA.r,selF.r),c1=Math.min(selA.c,selF.c),c2=Math.max(selA.c,selF.c);
+  const gb=$('#gbody'); if(!gb)return;
+  for(let r=r1;r<=r2;r++)for(let c=c1;c<=c2;c++){const t=gb.querySelector(`.ic[data-r="${r}"][data-c="${c}"]`);if(t)t.closest('td').classList.add('sel');}
+}
+function copyRange(){
+  if(!selA||!selF)return false;
+  const r1=Math.min(selA.r,selF.r),r2=Math.max(selA.r,selF.r),c1=Math.min(selA.c,selF.c),c2=Math.max(selA.c,selF.c);
+  if(r2===r1&&c2===c1)return false; // 単一セルは通常コピー
+  const fs=filteredStores(),cols=columns(),lines=[];
+  for(let r=r1;r<=r2;r++){const sn=fs[r]?fs[r].sn:null,row=[];for(let c=c1;c<=c2;c++){const key=cols[c]?cols[c].key:null;const v=(sn!=null&&key!=null&&state.orders[sn]&&state.orders[sn][key]!=null)?state.orders[sn][key]:'';row.push(v);}lines.push(row.join('\t'));}
+  copyText(lines.join('\n')); toast(`範囲をコピーしました（${r2-r1+1}行 × ${c2-c1+1}列）`); return true;
+}
+/* 範囲選択の終了・コピーは一度だけ登録 */
+document.addEventListener('mouseup',()=>{if(selecting){selecting=false;const gs=document.querySelector('.grid-scroll');if(gs)gs.classList.remove('noselect');}});
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&(e.key==='c'||e.key==='C')){if(copyRange())e.preventDefault();}});
+function updateHeader(){const chk=state.cfg.grid==='fixed';const thead=document.querySelector('table.grid thead tr');if(!thead)return;thead.innerHTML=`${chk?'<th class="c-chk"><input type="checkbox" id="chkAll"></th>':''}<th class="c-sn">店番</th><th class="c-nm">店名</th><th>地域</th>${columns().map(c=>`<th>${c.label}<span class="sub">${c.sub}</span></th>`).join('')}<th class="c-tot">店舗計</th>`;
+  const tf=document.querySelector('table.grid tfoot tr');if(tf)tf.innerHTML=`${chk?'<td class="c-chk"></td>':''}<td class="c-sn"></td><td class="c-nm lbl">合計</td><td></td>${columns().map(c=>`<td data-coltot="${c.key}">0</td>`).join('')}<td class="c-tot" id="grandqty">0</td>`;
+  if(chk){const ca=document.getElementById('chkAll');if(ca)ca.onchange=onChkAll;}}
+
+function handlePaste(e){
+  const el=document.activeElement; if(!el||!el.classList||!el.classList.contains('ic'))return;
+  const text=(e.clipboardData||window.clipboardData).getData('text'); if(!text)return; e.preventDefault();
+  const startR=+el.dataset.r,startC=+el.dataset.c,fs=filteredStores(),cols=columns();
+  const lines=text.replace(/\r/g,'').split('\n'); while(lines.length&&lines[lines.length-1]==='')lines.pop();
+  let filled=0,skipped=0;
+  lines.forEach((line,ri)=>line.split('\t').forEach((cell,ci)=>{const r=startR+ri,c=startC+ci;if(r>=fs.length||c>=cols.length)return;const raw=cell.trim();if(raw==='')return;if(!/^\d+$/.test(raw.replace(/[, ]/g,''))){skipped++;return;}const n=parseInt(raw.replace(/[^0-9]/g,''),10);if(isNaN(n)){skipped++;return;}const sn=fs[r].sn;state.orders[sn]=state.orders[sn]||{};state.orders[sn][cols[c].key]=String(n);filled++;}));
+  renderRows();recalc();toast(`貼り付け：${filled}セル反映${skipped?` ／ 非数値 ${skipped}件は除外`:''}`);
+}
+function gridTSV(){const cols=columns();const header=['店番','店名','地域',...cols.map(c=>c.label),'計'].join('\t');
+  const lines=STORES.map(s=>{const o=state.orders[s.sn]||{};let tot=0;const cells=cols.map(c=>{const v=(o[c.key]!=null&&o[c.key]!=='')?o[c.key]:'';tot+=num(v);return v;});return [s.sn,s.nm,s.rg,...cells,tot].join('\t');});
+  return [header,...lines].join('\n');}
+function copyText(t){try{if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).catch(()=>fallbackCopy(t));}else fallbackCopy(t);}catch(e){fallbackCopy(t);}}
+function fallbackCopy(t){const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
+
+/* ===================== 登録シート ===================== */
+function goSheet(){
+  const cfg=state.cfg;
+  for(const f of cfg.info){if(f.req){const v=f.type==='period'?state.info[f.id+'_s']:state.info[f.id];if(!v||(''+v).trim()===''){toast(f.label+'を入力してください');return;}}}
+  const w=wdOf(state.info.delivDate); if(state.info.delivDate&&!(w==='木'||w==='日')){toast('納品日は木・日のみ指定できます');return;}
+  if(cfg.grid==='fixed'){ if(mediaTotals().gq===0){toast('店舗にパターンを割り当ててください');return;} return renderMediaSheet(); }
+  const t=totals(); if(t.gq===0){toast(cfg.cellLabel+'が未入力です');return;}
+  renderSheet();
+}
+function renderSheet(){
+  const cfg=state.cfg, t=totals(), cols=t.cols;
+  const rows=STORES.filter(s=>{const o=state.orders[s.sn]||{};return cols.some(c=>num(o[c.key])>0);}).map(s=>{
+    const o=state.orders[s.sn]||{};let rq=0;
+    const tds=cols.map(c=>{const q=num(o[c.key]);rq+=q;const irr=isIrr(s.sn,c.key);return `<td style="${irr?'background:var(--irr);color:#8a5a00;font-weight:700':''}">${q||''}</td>`;}).join('');
+    return `<tr><td>${s.sn}</td><td class="nm">${s.nm}</td><td>${s.rg}</td>${tds}<td><b>${rq}</b></td></tr>`;
+  }).join('');
+  const colSum=cols.map(c=>`<td>${fmt(t.colq[c.key])}</td>`).join('');
+  const metas=cfg.info.map(f=>{let v;if(f.type==='period')v=`${state.info[f.id+'_s']||''}${wdSuffix(state.info[f.id+'_s'])} 〜 ${state.info[f.id+'_e']||''}${wdSuffix(state.info[f.id+'_e'])}`;else if(f.type==='date')v=`${state.info[f.id]||''}${wdSuffix(state.info[f.id])}`;else v=state.info[f.id]||'-';return `<div class="m"><span class="k">${f.label.replace(/（.*?）/,'')}</span><span class="v">${v}</span></div>`;}).join('');
+  $('#app').innerHTML=`
+    <h1 class="page">登録シート（内容確認）｜${cfg.name}</h1>
+    <p class="page-sub">以下の内容で登録します。確認のうえ送信してください。送信と同時に Task Relay チケットが自動起票されます。</p>
+    <div class="card"><h2>申請情報</h2><div class="sheet-meta">${metas}</div>
+      <h2>${cfg.name==='媒体申請'?'媒体マトリクス':'発注明細'}（入力のあった店舗のみ）</h2>
+      <table class="sheet-table"><thead><tr><th>店番</th><th>店名</th><th>地域</th>${cols.map(c=>`<th>${c.label}</th>`).join('')}<th>店舗計</th></tr></thead>
+        <tbody>${rows}</tbody><tfoot><tr><td colspan="3">合計${cfg.cellLabel}</td>${colSum}<td>${fmt(t.gq)}</td></tr></tfoot></table>
+      <div class="summary"><div class="s-item"><span>対象店舗数</span><b>${fmt(t.storeCnt)}</b></div><div class="s-item"><span>合計${cfg.cellLabel}</span><b>${fmt(t.gq)}</b></div>${t.hasPrice?`<div class="s-item"><span>合計金額（税抜）</span><b>${fmt(t.ga)} 円</b></div>`:`<div class="s-item"><span>イレギュラー店舗</span><b>${fmt(t.irrCnt)}</b></div>`}</div>
+    </div>
+    <div class="actions"><button class="btn btn-ghost" id="back">◀ 編集に戻る</button><button class="btn btn-primary" id="send">この内容で送信する ✓</button></div>`;
+  $('#back').onclick=renderEdit; $('#send').onclick=renderDone; window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderDone(){
+  const cfg=state.cfg,isM=cfg.grid==='fixed',tid='TR-'+(2600+Math.floor(Math.random()*8999));
+  const mt=isM?mediaTotals():null, dt=isM?null:totals();
+  const t={storeCnt:isM?mt.cnt:dt.storeCnt, gq:isM?mt.gq:dt.gq, hasPrice:isM?false:dt.hasPrice, ga:isM?0:dt.ga};
+  const headline=state.info.product||state.info.mdtitle||cfg.name;
+  $('#app').innerHTML=`
+    <div class="card"><div class="done-wrap">
+      <div class="check"><svg viewBox="0 0 24 24" width="38" height="38" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h1 class="page" style="text-align:center">${cfg.name}を登録しました</h1>
+      <p class="page-sub" style="text-align:center">Task Relay チケットを自動作成しました。担当デポへ連携されます。</p></div>
+      <div class="ticket">
+        <div class="tk-head"><span class="tk-id">${tid}</span><span>${cfg.name}</span><span class="tk-status">● OPEN / 受付済</span></div>
+        <div class="tk-line"><span class="tk-key">件名</span><span>${headline}</span></div>
+        <div class="tk-line"><span class="tk-key">掲載/取付期間</span><span>${state.info.period_s||''}${wdSuffix(state.info.period_s)} 〜 ${state.info.period_e||''}${wdSuffix(state.info.period_e)}</span></div>
+        <div class="tk-line"><span class="tk-key">納品日</span><span>${state.info.delivDate||''}${wdSuffix(state.info.delivDate)}</span></div>
+        <div class="tk-line"><span class="tk-key">対象店舗</span><span>${fmt(t.storeCnt)} 店 ／ 合計 ${fmt(t.gq)} ${cfg.cellLabel}</span></div>
+        ${t.hasPrice?`<div class="tk-line"><span class="tk-key">合計金額</span><span>${fmt(t.ga)} 円（税抜）</span></div>`:''}
+        <div class="tk-line"><span class="tk-key">申請者</span><span>${state.info.applicant||'-'}（Task Relayユーザー）</span></div>
+        <div class="tk-line"><span class="tk-key">担当</span><span>AdFlow 制作チーム（自動アサイン）</span></div>
+      </div>
+      <div class="flow"><span class="nd">申請</span><span class="ar">▶</span><span class="nd">Task Relay 起票</span><span class="ar">▶</span><span class="nd">デザイン制作</span><span class="ar">▶</span><span class="nd">掲載・撤去管理</span></div>
+      <div class="actions" style="justify-content:center;margin-top:22px"><button class="btn btn-ghost" id="again">続けて${cfg.name}を作成</button><button class="btn btn-primary" id="home">ポータルへ戻る</button></div>
+    </div>`;
+  $('#again').onclick=()=>{setType(state.type);demoFill();renderEdit();};
+  $('#home').onclick=()=>location.href='index.html';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* デモ用初期入力 */
+function demoFill(){
+  const seed=['318','300','356','179','322','317','334'];
+  if(state.cfg.grid==='fixed'){
+    state.irr=[{name:'大型店 強化',vals:state.pattern.map((v,i)=>i<4?num(v)+1:num(v))}];
+    ['318','300','356','179','322','317','334','180','333','391'].forEach(sn=>state.assign[sn]='std');
+    state.assign['318']='i0'; state.assign['322']='i0';
+  } else { const cols=columns(); seed.forEach((sn,k)=>{state.orders[sn]={};cols.forEach((c,ci)=>{if(ci<=1)state.orders[sn][c.key]=String(2+(k%3));});}); }
+}
+
+/* 起動：?type= で初期種別 */
+const _qt=(new URLSearchParams(location.search).get('type'))||'media';
+setType(TYPES[_qt]?_qt:'media');
+demoFill();
+renderEdit();
+</script>
+</body>
+</html>

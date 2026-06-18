@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ベイシア 媒体申請フォーム｜システムアーキテクチャ／処理フロー</title>
+<style>
+  :root{
+    --brand:#e60012; --brand-dark:#b8000e; --brand-soft:#fff0f1;
+    --ink:#1a1a1a; --muted:#6b7280; --line:#e5e7eb; --bg:#f4f6f9;
+    --sf:#00a1e0; --sf-soft:#e8f7fd; /* Salesforce blue */
+    --ok:#0a8f4f; --ok-soft:#e8f7ef;
+    --amber:#c77700; --amber-soft:#fff6e6;
+    --shadow:0 6px 24px rgba(20,20,40,.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .demo-banner{
+    background:linear-gradient(90deg,var(--brand),#ff5a4d); color:#fff; text-align:center;
+    font-size:12px; padding:6px; font-weight:700; letter-spacing:.3px;
+  }
+  .site-header{background:#fff; border-bottom:1px solid var(--line)}
+  .header-inner{max-width:920px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; gap:12px}
+  .logo{font-weight:900; font-size:19px; color:var(--brand); display:flex; align-items:center; gap:10px}
+  .logo .mark{background:var(--brand); color:#fff; border-radius:8px; padding:4px 9px; font-size:15px}
+  .header-sub{font-size:11.5px; color:var(--muted); margin-left:auto; text-align:right; line-height:1.3}
+  .wrap{max-width:920px; margin:0 auto; padding:26px 20px 70px}
+  .lede h1{font-size:22px; margin:0 0 6px}
+  .lede p{margin:0 0 22px; color:var(--muted); font-size:13.5px}
+
+  /* フロー全体 */
+  .flow{display:flex; flex-direction:column; align-items:center; gap:0}
+  .stage{width:100%; max-width:640px; animation:fade .4s ease both}
+  @keyframes fade{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  .node{
+    background:#fff; border:1.5px solid var(--line); border-radius:16px; box-shadow:var(--shadow);
+    padding:16px 18px; display:flex; gap:14px; align-items:flex-start; position:relative;
+  }
+  .node .ic{
+    width:46px; height:46px; border-radius:12px; flex:none; display:grid; place-items:center;
+  }
+  .node .ic svg{width:26px; height:26px}
+  .node .bd{flex:1; min-width:0}
+  .node .tt{font-weight:800; font-size:15px; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .node .ds{font-size:12.5px; color:var(--muted); margin-top:3px}
+  .tag{font-size:10.5px; font-weight:800; padding:2px 9px; border-radius:999px; white-space:nowrap}
+  .tag-guest{background:var(--ok-soft); color:var(--ok)}
+  .tag-step{background:var(--brand-soft); color:var(--brand-dark)}
+  .tag-sys{background:var(--sf-soft); color:#0077a8}
+  .tag-auto{background:#f3eaff; color:#7c3aed}
+
+  /* 矢印 */
+  .arrow{display:flex; flex-direction:column; align-items:center; padding:6px 0; width:100%; max-width:640px}
+  .arrow .lbl{font-size:11.5px; font-weight:700; color:var(--brand-dark); background:var(--brand-soft); padding:3px 12px; border-radius:999px; margin-bottom:4px}
+  .arrow .ln{width:2px; height:16px; background:var(--brand)}
+  .arrow .hd{width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:9px solid var(--brand)}
+
+  /* Salesforceプラットフォーム枠 */
+  .platform{
+    width:100%; max-width:680px; border:2px dashed var(--sf); border-radius:20px; padding:14px 14px 18px;
+    background:linear-gradient(180deg,var(--sf-soft),#fff 60%); position:relative; margin:2px 0;
+  }
+  .platform-h{display:flex; align-items:center; gap:8px; font-weight:800; font-size:12.5px; color:#0077a8; margin:0 4px 12px; }
+  .platform-h .sfmark{background:var(--sf); color:#fff; border-radius:6px; padding:2px 8px; font-size:11px}
+  .platform .stage{max-width:none}
+  .platform .arrow{max-width:none}
+  .platform .node{border-color:#cfeefb}
+
+  /* サイド注釈 */
+  .callouts{display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; max-width:680px; margin-top:18px}
+  .callout{background:#fff; border:1px solid var(--line); border-left:4px solid var(--amber); border-radius:12px; padding:12px 14px}
+  .callout.sec{border-left-color:var(--brand)}
+  .callout.data{border-left-color:var(--sf)}
+  .callout .ct{font-weight:800; font-size:13px; display:flex; align-items:center; gap:7px}
+  .callout .cd{font-size:12px; color:var(--muted); margin-top:5px}
+
+  /* レジェンド */
+  .legend{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:26px; font-size:11.5px; color:var(--muted)}
+  .legend span{display:flex; align-items:center; gap:6px}
+  .dot{width:11px; height:11px; border-radius:3px; display:inline-block}
+
+  .foot{max-width:680px; margin:22px auto 0; font-size:11.5px; color:var(--muted); border-top:1px dashed var(--line); padding-top:14px}
+  .foot b{color:var(--ink)}
+
+  @media(max-width:560px){
+    .callouts{grid-template-columns:1fr}
+    .lede h1{font-size:19px}
+  }
+  @media print{
+    body{background:#fff} .demo-banner{display:none}
+    .node,.platform,.callout{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="demo-banner">ベイシア様ご提案用 ｜ システムアーキテクチャ／処理フロー</div>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo"><span class="mark">B</span>Beisia 販促ポータル</div>
+    <div class="header-sub">AdFlow × Task Relay<br>Experience Cloud 構成</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="lede">
+    <h1>媒体・販促ツール申請　処理フロー</h1>
+    <p>ログイン不要のゲスト公開フォームから、Task Relayチケットの自動起票・担当連携までの一連の流れ。</p>
+  </div>
+
+  <div class="flow">
+
+    <!-- 1. 利用者 -->
+    <div class="stage">
+      <div class="node">
+        <div class="ic" style="background:var(--ok-soft); color:var(--ok)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        </div>
+        <div class="bd">
+          <div class="tt">申請者（店舗・バイヤー）<span class="tag tag-guest">ログイン不要</span></div>
+          <div class="ds">スマホ／PCのブラウザからアクセス。アカウント登録不要のゲスト利用。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><span class="lbl">申請データ入力（5ステップ）</span><span class="ln"></span><span class="hd"></span></div>
+
+    <!-- Salesforce プラットフォーム -->
+    <div class="platform">
+      <div class="platform-h"><span class="sfmark">Salesforce</span>Experience Cloud（クラウド基盤・公開サイト）</div>
+
+      <!-- 2. 公開フォーム -->
+      <div class="stage">
+        <div class="node">
+          <div class="ic" style="background:var(--brand-soft); color:var(--brand)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+          </div>
+          <div class="bd">
+            <div class="tt">公開フォームサイト（ゲストページ）<span class="tag tag-step">画面フロー / LWC</span></div>
+            <div class="ds">申請書類種別7種に応じて入力項目を自動出し分け。必須／選択リスト／店舗連動を5ステップで完結。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"><span class="lbl">送信</span><span class="ln"></span><span class="hd"></span></div>
+
+      <!-- 3. システムコンテキスト処理 -->
+      <div class="stage">
+        <div class="node">
+          <div class="ic" style="background:var(--sf-soft); color:#0077a8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <div class="bd">
+            <div class="tt">自動処理（画面フロー / Apex）<span class="tag tag-sys">システム実行</span></div>
+            <div class="ds">ゲスト権限を最小化したまま、システムコンテキストで実行。入力値を検証しレコードを生成。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"><span class="lbl">レコード自動作成</span><span class="ln"></span><span class="hd"></span></div>
+
+      <!-- 4. Task Relay -->
+      <div class="stage">
+        <div class="node">
+          <div class="ic" style="background:#f3eaff; color:#7c3aed">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="bd">
+            <div class="tt">Task Relay チケット自動起票<span class="tag tag-auto">自動アサイン</span></div>
+            <div class="ds">申請内容をチケット化。担当デポ／制作チームを自動アサインし、進捗管理へ。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><span class="lbl">連携</span><span class="ln"></span><span class="hd"></span></div>
+
+    <!-- 5. 後続業務 -->
+    <div class="stage">
+      <div class="node">
+        <div class="ic" style="background:var(--amber-soft); color:var(--amber)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        </div>
+        <div class="bd">
+          <div class="tt">デザイン制作 → 校了 → 納品</div>
+          <div class="ds">AdFlow制作チームが媒体を制作。校了後、店舗／本部へ納品。ステータスはTask Relayで一元管理。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- サイド注釈 -->
+    <div class="callouts">
+      <div class="callout sec">
+        <div class="ct">🛡 セキュリティ対策</div>
+        <div class="cd">reCAPTCHA・入力レート制限でスパム／いたずら起票を防止。ゲストユーザー権限は最小化。</div>
+      </div>
+      <div class="callout data">
+        <div class="ct">🗄 マスタ参照</div>
+        <div class="cd">店舗マスタ（全141店）・申請種別・媒体サイズをSalesforce上で一元管理し、フォームに連携。</div>
+      </div>
+    </div>
+
+    <!-- レジェンド -->
+    <div class="legend">
+      <span><i class="dot" style="background:var(--ok)"></i>利用者（ゲスト）</span>
+      <span><i class="dot" style="background:var(--brand)"></i>公開フォーム</span>
+      <span><i class="dot" style="background:var(--sf)"></i>システム処理</span>
+      <span><i class="dot" style="background:#7c3aed"></i>Task Relay</span>
+      <span><i class="dot" style="background:var(--amber)"></i>後続業務</span>
+    </div>
+
+    <div class="foot">
+      <b>ポイント：</b>申請者は<b>ログイン不要</b>でアクセスし、送信と同時に裏側の<b>システム実行フロー</b>が安全にTask Relayチケットを起票します。
+      ゲストには直接の作成権限を与えず、<b>システムコンテキスト実行</b>で権限を最小化する構成です。
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

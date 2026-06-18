@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>掲載物 撤去報告｜Beisia 販促ポータル</title>
+<style>
+  :root{--brand:#e60012;--brand-dark:#b8000e;--brand-soft:#fff0f1;--ink:#1a1a1a;--muted:#6b7280;--line:#e5e7eb;--bg:#f4f6f9;--ok:#0a8f4f;--ok-soft:#e8f7ef;--tr:#7c3aed;--shadow:0 6px 24px rgba(20,20,40,.08)}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:14px;-webkit-font-smoothing:antialiased}
+  .demo-banner{background:linear-gradient(90deg,var(--brand),#ff5a4d);color:#fff;text-align:center;font-size:12px;padding:6px;font-weight:700}
+  .userbar{background:#0f172a;color:#cbd5e1;font-size:12px}.userbar-in{max-width:1080px;margin:0 auto;padding:7px 22px;display:flex;align-items:center;gap:10px}
+  .userbar .tr{background:var(--tr);color:#fff;font-weight:800;padding:2px 9px;border-radius:6px;font-size:11px}.userbar .uname{font-weight:700;color:#fff}.userbar a{margin-left:auto;color:#93c5fd;text-decoration:none;font-weight:700}
+  .site-header{background:#fff;border-bottom:1px solid var(--line)}.header-inner{max-width:1080px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:12px}
+  .logo{font-weight:900;font-size:19px;color:var(--brand);display:flex;align-items:center;gap:10px}.logo .mark{background:var(--brand);color:#fff;border-radius:8px;padding:4px 9px;font-size:15px}
+  .header-sub{font-size:11.5px;color:var(--muted);margin-left:auto;text-align:right;line-height:1.3}
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 22px 80px}
+  h1.page{font-size:21px;margin:0 0 3px}.page-sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:18px 20px;margin-bottom:18px}
+  .card h2{font-size:15px;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .toolbar input[type=search]{width:230px;padding:9px 12px;border:1px solid #d4d9e0;border-radius:9px;font-size:13.5px}
+  .toolbar select{padding:9px 11px;border:1px solid #d4d9e0;border-radius:9px;font-size:13.5px;background:#fff}
+  table.list{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table.list th,table.list td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left}
+  table.list thead th{background:#f3f5f8;font-size:12px;color:#374151}
+  table.list tr:hover td{background:#fbfbfc}
+  .pill{font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--brand-soft);color:var(--brand-dark);white-space:nowrap}
+  .st{font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px}
+  .st.up{background:#e8f1ff;color:#1f6feb}.st.part{background:#fff6e6;color:#c77700}.st.done{background:var(--ok-soft);color:var(--ok)}
+  .btn-row{border:none;background:var(--brand);color:#fff;border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit}
+  .btn-row:hover{background:var(--brand-dark)} .btn-row.dis{background:#cfd4db;cursor:default}
+
+  .meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 22px;font-size:13px;margin-bottom:8px}
+  .meta-grid .m{display:flex;gap:8px}.meta-grid .k{color:var(--muted);min-width:80px}.meta-grid .v{font-weight:700}
+  .store-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0 10px}
+  .mini{border:1px solid #d4d9e0;background:#fff;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}.mini:hover{background:var(--brand-soft)}
+  .store-box{border:1px solid var(--line);border-radius:10px;max-height:46vh;overflow:auto}
+  .srow{display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--line)}.srow:last-child{border:none}
+  .srow:hover{background:#fbfbfc}
+  .srow input[type=checkbox]{width:18px;height:18px;accent-color:var(--ok)}
+  .srow .sn{font-size:11.5px;color:var(--muted);width:44px}.srow .nm{flex:1;font-weight:600}
+  .srow .tag{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px;background:var(--ok-soft);color:var(--ok)}
+  .srow.off .tag{background:#eef1f5;color:#9aa3af}
+  .date-wrap{display:flex;align-items:center;gap:7px}.date-wrap input{padding:8px 10px;border:1px solid #d4d9e0;border-radius:8px;font-size:13.5px}
+  .wd{font-size:12px;font-weight:800}
+  .summary{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;padding:12px 16px;background:var(--brand-soft);border-radius:10px;font-size:13px}
+  .summary b{font-size:18px;color:var(--brand-dark)}.summary .s-item{display:flex;flex-direction:column}.summary .s-item span{font-size:11px;color:var(--muted)}
+  .actions{display:flex;justify-content:flex-end;gap:12px;margin-top:8px}
+  .btn{border:none;border-radius:10px;padding:13px 30px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+  .btn-primary{background:var(--brand);color:#fff}.btn-primary:hover{background:var(--brand-dark)}.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .note{background:var(--ok-soft);border:1px solid #bfe6cf;color:#0a6b3d;border-radius:10px;padding:10px 14px;font-size:12.5px;margin-top:14px}
+  .done-wrap{text-align:center;padding:20px 0}
+  .check{width:74px;height:74px;border-radius:50%;background:var(--ok);margin:0 auto 16px;display:grid;place-items:center;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:50}.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="demo-banner">DEMO ／ ベイシア様ご提案用 ｜ 掲載物 撤去報告（申請済みリストから1申請ごとに一括）・PC</div>
+<div class="userbar"><div class="userbar-in"><span class="tr">Task Relay</span><span>ログイン中：</span><span class="uname">田中 太郎（販売部）</span><a href="index.html">ログアウト</a></div></div>
+<header class="site-header"><div class="header-inner"><div class="logo"><span class="mark">B</span>Beisia 販促ポータル</div><div class="header-sub">Experience Cloud ｜ 掲載・撤去管理<br>撤去報告（一括）</div></div></header>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const _RAW=[['17','大間々','群馬'],['27','吉井','群馬'],['30','境野','群馬'],['170','更埴','長野'],['173','矢板','栃木'],['175','尾島','群馬'],['176','榛名','群馬'],['178','新里','群馬'],['179','渋川','群馬'],['180','寄居','埼玉'],['181','西部','群馬'],['182','赤堀','群馬'],['185','富士見','群馬'],['300','沼田','群馬'],['303','高萩','茨城'],['306','大胡','群馬'],['312','今市','栃木'],['317','富岡','群馬'],['318','前橋','群馬'],['319','安中','群馬'],['322','宇都宮','栃木'],['325','玉造','茨城'],['334','鶴ヶ島','埼玉'],['337','栗橋','埼玉'],['339','佐倉','千葉'],['342','市原','千葉'],['351','野田','千葉'],['356','太田','群馬'],['357','前橋南','群馬'],['366','真岡','栃木'],['375','藤枝','静岡'],['391','上尾','埼玉'],['393','成田','千葉'],['398','倉賀野','群馬'],['504','吉岡','群馬'],['510','日立','茨城'],['514','名古屋','愛知'],['602','長久手','愛知'],['608','壬生','栃木'],['650','本庄児','埼玉']];
+const STORES=_RAW.map(r=>({sn:r[0],nm:r[1],rg:r[2]}));
+const SUBMITTED=[
+  {id:'TR-3021',type:'アンカーPOP申請',title:'UVカットジャケット ほか',ps:'2026-07-02',pe:'2026-07-15',stores:38,status:'掲載中'},
+  {id:'TR-3025',type:'オネストカード申請',title:'オレンジ100%果汁 価格改定',ps:'2026-06-18',pe:'2026-07-05',stores:30,status:'掲載中'},
+  {id:'TR-3030',type:'媒体申請',title:'国産豚ロース 特売',ps:'2026-07-02',pe:'2026-07-08',stores:24,status:'掲載中'},
+  {id:'TR-3034',type:'媒体申請',title:'PB プライスカード 春',ps:'2026-06-25',pe:'2026-07-20',stores:36,status:'一部撤去'},
+  {id:'TR-3022',type:'アンカーPOP申請',title:'カットソー長袖 BF先行',ps:'2026-07-01',pe:'2026-07-10',stores:40,status:'掲載中'},
+];
+let Q='',TF='';
+const $=s=>document.querySelector(s);
+const WD=['日','月','火','水','木','金','土'];const wd=d=>{if(!d)return'';const x=new Date(d+'T00:00:00');return isNaN(x.getTime())?'':'（'+WD[x.getDay()]+'）';};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);}
+const stCls=s=>s==='掲載中'?'up':s==='一部撤去'?'part':'done';
+
+/* ===== 一覧 ===== */
+function renderList(){
+  const rows=SUBMITTED.filter(a=>{if(Q.trim()&&!(a.title.includes(Q)||a.id.includes(Q)))return false;if(TF&&a.type!==TF)return false;return true;}).map(a=>`
+    <tr>
+      <td>${a.id}</td><td><span class="pill">${a.type.replace('申請','')}</span></td><td>${a.title}</td>
+      <td>${a.ps}${wd(a.ps)} 〜 ${a.pe}${wd(a.pe)}</td><td style="text-align:center">${a.stores}店</td>
+      <td><span class="st ${stCls(a.status)}">${a.status}</span></td>
+      <td style="text-align:right">${a.status==='撤去済'?'<button class="btn-row dis">報告済</button>':`<button class="btn-row" data-go="${a.id}">撤去報告 ▶</button>`}</td>
+    </tr>`).join('');
+  $('#app').innerHTML=`
+    <h1 class="page">掲載物 撤去報告</h1>
+    <p class="page-sub">掲載期間が終了した販促物を、<b>申請単位で一括撤去報告</b>します。3種の申請（媒体／アンカーPOP／オネスト）の申請済みリストから1件を選んでください。</p>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="🔍 件名・申請番号で検索" value="${Q}">
+      <select id="tf"><option value="">全種別</option>${['媒体申請','アンカーPOP申請','オネストカード申請'].map(t=>`<option ${TF===t?'selected':''}>${t}</option>`).join('')}</select>
+    </div>
+    <table class="list"><thead><tr><th>申請番号</th><th>種別</th><th>件名</th><th>掲載期間</th><th style="text-align:center">店舗</th><th>状況</th><th></th></tr></thead><tbody>${rows||`<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">該当する申請がありません</td></tr>`}</tbody></table>`;
+  $('#q').oninput=e=>{Q=e.target.value;const p=e.target.selectionStart;renderList();const n=$('#q');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(x){}}};
+  $('#tf').onchange=e=>{TF=e.target.value;renderList();};
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>openReport(b.dataset.go));
+}
+
+/* ===== 撤去報告（1申請・一括） ===== */
+let cur=null, sel={};
+function openReport(id){
+  cur=SUBMITTED.find(a=>a.id===id);
+  const list=STORES.slice(0,Math.min(cur.stores,STORES.length));
+  sel={}; list.forEach(s=>sel[s.sn]=true); // 既定：全店「撤去」
+  renderReport(list);
+}
+function renderReport(list){
+  const today='2026-07-16';
+  const cnt=Object.values(sel).filter(Boolean).length;
+  $('#app').innerHTML=`
+    <h1 class="page">撤去報告 ｜ ${cur.id}</h1>
+    <p class="page-sub">この申請の掲載物を<b>一括で撤去報告</b>します。撤去していない店舗があればチェックを外してください（商品単位・サイズ別の細分化は不要）。</p>
+    <div class="card">
+      <h2>対象申請</h2>
+      <div class="meta-grid">
+        <div class="m"><span class="k">申請番号</span><span class="v">${cur.id}</span></div>
+        <div class="m"><span class="k">種別</span><span class="v"><span class="pill">${cur.type.replace('申請','')}</span></span></div>
+        <div class="m"><span class="k">件名</span><span class="v">${cur.title}</span></div>
+        <div class="m"><span class="k">掲載期間</span><span class="v">${cur.ps}${wd(cur.ps)} 〜 ${cur.pe}${wd(cur.pe)}</span></div>
+        <div class="m"><span class="k">対象店舗</span><span class="v">${cur.stores} 店</span></div>
+      </div>
+      <div class="store-tools">
+        <div class="date-wrap">撤去日：<input type="date" id="rdate" value="${today}"><span class="wd" id="rwd">${wd(today)}</span></div>
+        <button class="mini" id="all">全店「撤去」</button>
+        <button class="mini" id="none">全解除</button>
+        <span style="margin-left:auto;font-size:12px;color:var(--muted)">店舗ごとに「掲載中／撤去」を切替できます</span>
+      </div>
+      <div class="store-box" id="sbox">
+        ${list.map(s=>`<div class="srow ${sel[s.sn]?'':'off'}"><input type="checkbox" data-sn="${s.sn}" ${sel[s.sn]?'checked':''}><span class="sn">${s.sn}</span><span class="nm">${s.nm}</span><span class="tag">${sel[s.sn]?'撤去':'掲載中'}</span></div>`).join('')}
+      </div>
+      <div class="summary"><div class="s-item"><span>撤去報告する店舗</span><b id="cnt">${cnt}</b></div><div class="s-item"><span>掲載継続（除外）</span><b id="rem">${list.length-cnt}</b></div></div>
+      <div class="note">💡 店舗側はTask Relayを直接操作しません。報告内容はシステムに記録され、本部・制作側の掲載管理へ反映されます。</div>
+    </div>
+    <div class="actions"><button class="btn btn-ghost" id="back">◀ 一覧へ戻る</button><button class="btn btn-primary" id="send">${cnt}店をまとめて撤去報告 ✓</button></div>`;
+  const upd=()=>{const c=Object.values(sel).filter(Boolean).length;$('#cnt').textContent=c;$('#rem').textContent=list.length-c;$('#send').textContent=`${c}店をまとめて撤去報告 ✓`;};
+  $('#rdate').onchange=e=>{$('#rwd').textContent=wd(e.target.value);};
+  $('#all').onclick=()=>{list.forEach(s=>sel[s.sn]=true);renderReport(list);};
+  $('#none').onclick=()=>{list.forEach(s=>sel[s.sn]=false);renderReport(list);};
+  document.querySelectorAll('[data-sn]').forEach(cb=>cb.onchange=()=>{sel[cb.dataset.sn]=cb.checked;const row=cb.closest('.srow');row.classList.toggle('off',!cb.checked);row.querySelector('.tag').textContent=cb.checked?'撤去':'掲載中';upd();});
+  $('#back').onclick=renderList;
+  $('#send').onclick=()=>{const c=Object.values(sel).filter(Boolean).length;if(c===0){toast('撤去報告する店舗を選択してください');return;}cur.status=(c>=list.length)?'撤去済':'一部撤去';renderDone(c,list.length, $('#rdate').value);};
+}
+function renderDone(c,total,date){
+  $('#app').innerHTML=`
+    <div class="card"><div class="done-wrap">
+      <div class="check"><svg viewBox="0 0 24 24" width="40" height="40" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h1 class="page">撤去報告を送信しました</h1>
+      <p class="page-sub">${cur.id}「${cur.title}」の撤去報告を受け付けました（撤去日 ${date}${wd(date)}）。</p>
+      <div class="summary" style="justify-content:center;display:inline-flex"><div class="s-item"><span>撤去報告</span><b>${c} / ${total} 店</b></div><div class="s-item"><span>申請ステータス</span><b>${cur.status}</b></div></div>
+      <p class="page-sub" style="margin-top:18px;font-size:11.5px">※ 報告は掲載管理（Task Relay）へ反映され、全店撤去で「撤去済」、一部のみで「一部撤去」となります。</p>
+      <div class="actions" style="justify-content:center;margin-top:18px"><button class="btn btn-primary" id="back">申請一覧へ戻る</button></div>
+    </div></div>`;
+  $('#back').onclick=renderList;
+}
+renderList();
+</script>
+</body>
+</html>
