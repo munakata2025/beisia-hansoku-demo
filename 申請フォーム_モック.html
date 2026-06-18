@@ -71,6 +71,10 @@
   /* パターン定義テーブル */
   .ptbl{display:flex; flex-direction:column; gap:6px; margin-bottom:12px; overflow-x:auto}
   .pthead,.ptrow{display:grid; grid-template-columns:160px repeat(7,minmax(56px,1fr)) 34px; gap:8px; align-items:center; min-width:680px}
+  .ptbl.master .pthead,.ptbl.master .ptrow{grid-template-columns:150px repeat(7,minmax(48px,1fr)) 118px 30px; min-width:780px}
+  .mcount{display:flex; align-items:center; gap:7px; justify-content:flex-end; font-size:11px; color:var(--muted); white-space:nowrap}
+  .mini2{border:1px solid var(--brand); background:var(--brand-soft); color:var(--brand-dark); border-radius:6px; padding:4px 11px; font-size:11px; font-weight:800; cursor:pointer; font-family:inherit}
+  .mini2:hover{background:#ffe0e2}
   .pthead{font-size:11px; font-weight:800; color:var(--muted); text-align:center}
   .pthead .pname{text-align:left}
   .ptrow input{padding:7px; font-size:13px; text-align:center; border:1px solid #d4d9e0; border-radius:7px}
@@ -255,8 +259,15 @@ function setType(t){
   const cfg=TYPES[t];
   state={ type:t, cfg, info:Object.assign({},cfg.infoDefault),
     items: cfg.grid==='detail'?JSON.parse(JSON.stringify(cfg.items)):[],
-    pattern: cfg.grid==='fixed'?cfg.pattern.slice():null,
-    irr:[], assign:{}, orders:{} };
+    masters:[], assign:{}, orders:{}, _mc:0 };
+  if(cfg.grid==='fixed'){
+    const grp=STORES.map((s,i)=> i%5===0?'large':(i%7===0?'drug':'std'));
+    state.masters=[
+      {id:'large',name:'大型店',vals:[2,3,2,3,3,2,4],stores:STORES.filter((s,i)=>grp[i]==='large').map(s=>s.sn)},
+      {id:'std',  name:'標準店',vals:[1,2,1,2,3,2,4],stores:STORES.filter((s,i)=>grp[i]==='std').map(s=>s.sn)},
+      {id:'drug', name:'ドラッグ強化',vals:[1,1,1,1,2,1,2],stores:STORES.filter((s,i)=>grp[i]==='drug').map(s=>s.sn)},
+    ];
+  }
   STORE_Q=''; STORE_RG=[]; rowSel=new Set(); selA=selF=null;
 }
 
@@ -280,7 +291,7 @@ function reGrid(){ if(state.cfg.grid==='fixed'){renderMediaRows();recalcMedia();
 function onChkAll(e){const on=e.target.checked;filteredStores().forEach(s=>{if(on)rowSel.add(s.sn);else rowSel.delete(s.sn);});reGrid();}
 
 /* ===== 媒体申請：通常／イレギュラーパターン × 店舗割当 ===== */
-function patterns(){return [{id:'std',name:'通常',vals:state.pattern}].concat(state.irr.map((p,i)=>({id:'i'+i,name:p.name||('イレギュラー'+(i+1)),vals:p.vals})));}
+function patterns(){return state.masters.map(m=>({id:m.id,name:m.name,vals:m.vals}));}
 function valsOf(id){const p=patterns().find(x=>x.id===id);return p?p.vals:null;}
 function mediaTotals(){const media=SIZES.map(()=>0);let cnt=0,gq=0;const byP={};patterns().forEach(p=>byP[p.id]=0);for(const sn in state.assign){const v=valsOf(state.assign[sn]);if(!v)continue;cnt++;byP[state.assign[sn]]=(byP[state.assign[sn]]||0)+1;v.forEach((q,i)=>{media[i]+=num(q);gq+=num(q);});}return {media,cnt,gq,byP};}
 
@@ -291,13 +302,12 @@ function renderMediaEdit(){
     <h1 class="page">${cfg.name}</h1>
     <p class="page-sub">媒体ごとの枚数は「通常パターン／イレギュラーパターン」で定義し、各店舗にパターンを割り当てます（店舗ごとの数値入力は不要）。</p>
     <div class="card"><h2><span class="step-no">1</span>申請情報</h2><div class="info-grid">${cfg.info.map(hfield).join('')}</div></div>
-    <div class="card"><h2><span class="step-no">2</span>パターン定義（媒体別枚数）<span class="note">通常パターン＋必要に応じてイレギュラーパターンを追加</span></h2>
-      <div class="ptbl">
-        <div class="pthead"><span class="pname">パターン</span>${SIZES.map(s=>`<span>${s}</span>`).join('')}<span></span></div>
-        <div class="ptrow std"><span class="pname"><b>通常</b></span>${SIZES.map((s,i)=>`<input type="number" min="0" data-pat="${i}" value="${state.pattern[i]}">`).join('')}<span></span></div>
-        ${state.irr.map((p,i)=>`<div class="ptrow"><span class="pname"><input type="text" data-irrname="${i}" value="${p.name||''}" placeholder="イレギュラー${i+1}"></span>${SIZES.map((s,j)=>`<input type="number" min="0" data-irrval="${i}.${j}" value="${p.vals[j]}">`).join('')}<span><button class="ptdel" data-irrdel="${i}" title="削除">×</button></span></div>`).join('')}
+    <div class="card"><h2><span class="step-no">2</span>店舗パターン（マスター）<span class="note">店舗グループ × 媒体枚数を定義。「適用」で既定の対象店舗へ自動展開</span></h2>
+      <div class="ptbl master">
+        <div class="pthead"><span class="pname">パターン名</span>${SIZES.map(s=>`<span>${s}</span>`).join('')}<span>既定店舗</span><span></span></div>
+        ${state.masters.map(m=>`<div class="ptrow"><span class="pname"><input type="text" data-mname="${m.id}" value="${m.name}"></span>${SIZES.map((s,j)=>`<input type="number" min="0" data-mval="${m.id}.${j}" value="${m.vals[j]}">`).join('')}<span class="mcount">${m.stores.length}店<button class="mini2" data-apply="${m.id}">適用</button></span><span><button class="ptdel" data-mdel="${m.id}" title="削除">×</button></span></div>`).join('')}
       </div>
-      <button class="btn-add2" id="addIrr">＋ イレギュラーパターンを追加</button>
+      <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap"><button class="btn-add2" id="addM">＋ 店舗パターンを追加</button><button class="mini accent" id="applyAll">▣ 全パターンを一括適用</button></div>
     </div>
     <div class="card"><h2><span class="step-no">3</span>店舗へパターンを割り当て<span class="note">全${STORES.length}店</span></h2>
       <div class="paste-tip">📋 <div><b>使い方：</b>左のチェックで店舗を選び、上のボタン（通常／イレギュラー／対象外）で<b>まとめて割り当て</b>。各行のプルダウンで個別変更もできます。</div></div>
@@ -349,11 +359,12 @@ function bindMedia(){
   document.querySelectorAll('.dpick input[type=date]').forEach(el=>el.onchange=()=>{const restrict=el.dataset.wd==='1';state.info[el.dataset.h]=el.value;const dv=el.closest('.dpick').querySelector('.dval');dv.textContent=fmtDateLabel(el.value,restrict);dv.className='dval '+dvalCls(el.value,restrict);});
   document.querySelectorAll('.dpick').forEach(dp=>dp.onclick=()=>{const inp=dp.querySelector('input[type=date]');try{inp.showPicker();}catch(e){inp.focus();}});
   document.querySelectorAll('[data-hchip]').forEach(el=>el.onclick=()=>{state.info[el.dataset.hchip]=el.dataset.v;renderEdit();});
-  document.querySelectorAll('[data-pat]').forEach(el=>el.oninput=()=>{state.pattern[+el.dataset.pat]=num(el.value);clearTimeout(window._p);window._p=setTimeout(()=>{renderMediaRows();recalcMedia();},300);});
-  document.querySelectorAll('[data-irrname]').forEach(el=>el.oninput=()=>{state.irr[+el.dataset.irrname].name=el.value;clearTimeout(window._i);window._i=setTimeout(()=>{renderMediaRows();recalcMedia();},400);});
-  document.querySelectorAll('[data-irrval]').forEach(el=>el.oninput=()=>{const a=el.dataset.irrval.split('.');state.irr[+a[0]].vals[+a[1]]=num(el.value);clearTimeout(window._p);window._p=setTimeout(()=>{renderMediaRows();recalcMedia();},300);});
-  document.querySelectorAll('[data-irrdel]').forEach(el=>el.onclick=()=>{const i=+el.dataset.irrdel,id='i'+i;Object.keys(state.assign).forEach(sn=>{if(state.assign[sn]===id)delete state.assign[sn];});state.irr.splice(i,1);renderMediaEdit();});
-  const ai=$('#addIrr');if(ai)ai.onclick=()=>{state.irr.push({name:'',vals:state.pattern.slice()});renderMediaEdit();};
+  document.querySelectorAll('[data-mname]').forEach(el=>{el.oninput=()=>{const m=state.masters.find(x=>x.id===el.dataset.mname);if(m)m.name=el.value;};el.onchange=()=>renderMediaEdit();});
+  document.querySelectorAll('[data-mval]').forEach(el=>el.oninput=()=>{const a=el.dataset.mval.split('.');const m=state.masters.find(x=>x.id===a[0]);if(m)m.vals[+a[1]]=num(el.value);clearTimeout(window._p);window._p=setTimeout(()=>{renderMediaRows();recalcMedia();},300);});
+  document.querySelectorAll('[data-apply]').forEach(b=>b.onclick=()=>{const m=state.masters.find(x=>x.id===b.dataset.apply);if(!m)return;m.stores.forEach(sn=>state.assign[sn]=m.id);renderMediaRows();recalcMedia();toast(`「${m.name}」を既定${m.stores.length}店に適用しました`);});
+  document.querySelectorAll('[data-mdel]').forEach(b=>b.onclick=()=>{const id=b.dataset.mdel;Object.keys(state.assign).forEach(sn=>{if(state.assign[sn]===id)delete state.assign[sn];});state.masters=state.masters.filter(m=>m.id!==id);renderMediaEdit();});
+  const am=$('#addM');if(am)am.onclick=()=>{state.masters.push({id:'m'+(state._mc++),name:'新規パターン',vals:(state.masters[0]?state.masters[0].vals.slice():SIZES.map(()=>0)),stores:[]});renderMediaEdit();};
+  const aa=$('#applyAll');if(aa)aa.onclick=()=>{state.masters.forEach(m=>m.stores.forEach(sn=>state.assign[sn]=m.id));renderMediaRows();recalcMedia();toast('全パターンを一括適用しました');};
   document.querySelectorAll('[data-assign]').forEach(b=>b.onclick=()=>{const id=b.dataset.assign,sns=[...rowSel];if(!sns.length){toast('左のチェックで店舗を選択してください');return;}sns.forEach(sn=>{if(id==='none')delete state.assign[sn];else state.assign[sn]=id;});renderMediaRows();recalcMedia();toast(`${sns.length}店を「${id==='none'?'対象外':patterns().find(p=>p.id===id).name}」に設定`);});
   const q=$('#q');q.oninput=()=>{STORE_Q=q.value;const p=q.selectionStart;renderMediaRows();recalcMedia();const n=$('#q');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(e){}}};
   bindRegions();
@@ -623,9 +634,8 @@ function renderDone(){
 function demoFill(){
   const seed=['318','300','356','179','322','317','334'];
   if(state.cfg.grid==='fixed'){
-    state.irr=[{name:'大型店 強化',vals:state.pattern.map((v,i)=>i<4?num(v)+1:num(v))}];
-    ['318','300','356','179','322','317','334','180','333','391'].forEach(sn=>state.assign[sn]='std');
-    state.assign['318']='i0'; state.assign['322']='i0';
+    // 大型店・標準店マスターを適用（ドラッグ強化は対象外のまま＝デモで割当の差を見せる）
+    state.masters.filter(m=>m.id!=='drug').forEach(m=>m.stores.forEach(sn=>state.assign[sn]=m.id));
   } else { const cols=columns(); seed.forEach((sn,k)=>{state.orders[sn]={};cols.forEach((c,ci)=>{if(ci<=1)state.orders[sn][c.key]=String(2+(k%3));});}); }
 }
 
