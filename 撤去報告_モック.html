@@ -70,7 +70,7 @@ const SUBMITTED=[
   {id:'TR-3021',type:'アンカーPOP申請',title:'UVカットジャケット ほか',ps:'2026-07-02',pe:'2026-07-15',stores:38,status:'掲載中'},
   {id:'TR-3025',type:'オネストカード申請',title:'オレンジ100%果汁 価格改定',ps:'2026-06-18',pe:'2026-07-05',stores:30,status:'掲載中'},
   {id:'TR-3030',type:'媒体申請',title:'国産豚ロース 特売',ps:'2026-07-02',pe:'2026-07-08',stores:24,status:'掲載中'},
-  {id:'TR-3034',type:'媒体申請',title:'PB プライスカード 春',ps:'2026-06-25',pe:'2026-07-20',stores:36,status:'一部撤去'},
+  {id:'TR-3034',type:'媒体申請',title:'PB プライスカード 春',ps:'2026-06-25',pe:'2026-07-20',stores:36,status:'掲載中'},
   {id:'TR-3022',type:'アンカーPOP申請',title:'カットソー長袖 BF先行',ps:'2026-07-01',pe:'2026-07-10',stores:40,status:'掲載中'},
 ];
 let Q='',TF='';
@@ -90,7 +90,7 @@ function renderList(){
     </tr>`).join('');
   $('#app').innerHTML=`
     <h1 class="page">掲載物 撤去報告</h1>
-    <p class="page-sub">掲載期間が終了した販促物を、<b>申請単位で一括撤去報告</b>します。3種の申請（媒体／アンカーPOP／オネスト）の申請済みリストから1件を選んでください。</p>
+    <p class="page-sub">掲載期間が終了した販促物を、<b>商品（チケット）単位で全店一括</b>に撤去報告します。3種の申請（媒体／アンカーPOP／オネスト）の申請済みリストから1件を選んでください（部分撤去なし）。</p>
     <div class="toolbar">
       <input type="search" id="q" placeholder="🔍 件名・申請番号で検索" value="${Q}">
       <select id="tf"><option value="">全種別</option>${['媒体申請','アンカーPOP申請','オネストカード申請'].map(t=>`<option ${TF===t?'selected':''}>${t}</option>`).join('')}</select>
@@ -101,20 +101,14 @@ function renderList(){
   document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>openReport(b.dataset.go));
 }
 
-/* ===== 撤去報告（1申請・一括） ===== */
-let cur=null, sel={};
-function openReport(id){
-  cur=SUBMITTED.find(a=>a.id===id);
-  const list=STORES.slice(0,Math.min(cur.stores,STORES.length));
-  sel={}; list.forEach(s=>sel[s.sn]=true); // 既定：全店「撤去」
-  renderReport(list);
-}
-function renderReport(list){
+/* ===== 撤去報告（商品＝チケット単位・全店一括／部分撤去なし） ===== */
+let cur=null;
+function openReport(id){ cur=SUBMITTED.find(a=>a.id===id); renderReport(); }
+function renderReport(){
   const today='2026-07-16';
-  const cnt=Object.values(sel).filter(Boolean).length;
   $('#app').innerHTML=`
     <h1 class="page">撤去報告 ｜ ${cur.id}</h1>
-    <p class="page-sub">この申請の掲載物を<b>一括で撤去報告</b>します。撤去していない店舗があればチェックを外してください（商品単位・サイズ別の細分化は不要）。</p>
+    <p class="page-sub">この商品（チケット）の掲載物を<b>全店まとめて撤去報告</b>します。撤去は<b>商品（チケット）単位</b>で行い、一部店舗のみの撤去はありません。</p>
     <div class="card">
       <h2>対象申請</h2>
       <div class="meta-grid">
@@ -122,37 +116,27 @@ function renderReport(list){
         <div class="m"><span class="k">種別</span><span class="v"><span class="pill">${cur.type.replace('申請','')}</span></span></div>
         <div class="m"><span class="k">件名</span><span class="v">${cur.title}</span></div>
         <div class="m"><span class="k">掲載期間</span><span class="v">${cur.ps}${wd(cur.ps)} 〜 ${cur.pe}${wd(cur.pe)}</span></div>
-        <div class="m"><span class="k">対象店舗</span><span class="v">${cur.stores} 店</span></div>
+        <div class="m"><span class="k">対象店舗</span><span class="v">${cur.stores} 店（全店一括）</span></div>
       </div>
       <div class="store-tools">
         <div class="date-wrap">撤去日：<input type="date" id="rdate" value="${today}"><span class="wd" id="rwd">${wd(today)}</span></div>
-        <button class="mini" id="all">全店「撤去」</button>
-        <button class="mini" id="none">全解除</button>
-        <span style="margin-left:auto;font-size:12px;color:var(--muted)">店舗ごとに「掲載中／撤去」を切替できます</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--muted)">掲載期間終了に伴い、対象全店の撤去を報告します</span>
       </div>
-      <div class="store-box" id="sbox">
-        ${list.map(s=>`<div class="srow ${sel[s.sn]?'':'off'}"><input type="checkbox" data-sn="${s.sn}" ${sel[s.sn]?'checked':''}><span class="sn">${s.sn}</span><span class="nm">${s.nm}</span><span class="tag">${sel[s.sn]?'撤去':'掲載中'}</span></div>`).join('')}
-      </div>
-      <div class="summary"><div class="s-item"><span>撤去報告する店舗</span><b id="cnt">${cnt}</b></div><div class="s-item"><span>掲載継続（除外）</span><b id="rem">${list.length-cnt}</b></div></div>
-      <div class="note">💡 店舗側はTask Relayを直接操作しません。報告内容はシステムに記録され、本部・制作側の掲載管理へ反映されます。</div>
+      <div class="note">💡 撤去報告は<b>商品（チケット）単位</b>です（店舗ごとの部分撤去はありません）。報告内容はシステムに記録され、本部・制作側の掲載管理へ反映されます。</div>
     </div>
-    <div class="actions"><button class="btn btn-ghost" id="back">◀ 一覧へ戻る</button><button class="btn btn-primary" id="send">${cnt}店をまとめて撤去報告 ✓</button></div>`;
-  const upd=()=>{const c=Object.values(sel).filter(Boolean).length;$('#cnt').textContent=c;$('#rem').textContent=list.length-c;$('#send').textContent=`${c}店をまとめて撤去報告 ✓`;};
+    <div class="actions"><button class="btn btn-ghost" id="back">◀ 一覧へ戻る</button><button class="btn btn-primary" id="send">全${cur.stores}店の撤去を報告する ✓</button></div>`;
   $('#rdate').onchange=e=>{$('#rwd').textContent=wd(e.target.value);};
-  $('#all').onclick=()=>{list.forEach(s=>sel[s.sn]=true);renderReport(list);};
-  $('#none').onclick=()=>{list.forEach(s=>sel[s.sn]=false);renderReport(list);};
-  document.querySelectorAll('[data-sn]').forEach(cb=>cb.onchange=()=>{sel[cb.dataset.sn]=cb.checked;const row=cb.closest('.srow');row.classList.toggle('off',!cb.checked);row.querySelector('.tag').textContent=cb.checked?'撤去':'掲載中';upd();});
   $('#back').onclick=renderList;
-  $('#send').onclick=()=>{const c=Object.values(sel).filter(Boolean).length;if(c===0){toast('撤去報告する店舗を選択してください');return;}cur.status=(c>=list.length)?'撤去済':'一部撤去';renderDone(c,list.length, $('#rdate').value);};
+  $('#send').onclick=()=>{ cur.status='撤去済'; renderDone($('#rdate').value); };
 }
-function renderDone(c,total,date){
+function renderDone(date){
   $('#app').innerHTML=`
     <div class="card"><div class="done-wrap">
       <div class="check"><svg viewBox="0 0 24 24" width="40" height="40" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h1 class="page">撤去報告を送信しました</h1>
-      <p class="page-sub">${cur.id}「${cur.title}」の撤去報告を受け付けました（撤去日 ${date}${wd(date)}）。</p>
-      <div class="summary" style="justify-content:center;display:inline-flex"><div class="s-item"><span>撤去報告</span><b>${c} / ${total} 店</b></div><div class="s-item"><span>申請ステータス</span><b>${cur.status}</b></div></div>
-      <p class="page-sub" style="margin-top:18px;font-size:11.5px">※ 報告は掲載管理（Task Relay）へ反映され、全店撤去で「撤去済」、一部のみで「一部撤去」となります。</p>
+      <p class="page-sub">${cur.id}「${cur.title}」を<b>撤去済</b>として報告しました（撤去日 ${date}${wd(date)} ／ 対象 ${cur.stores}店）。</p>
+      <div class="summary" style="justify-content:center;display:inline-flex"><div class="s-item"><span>撤去報告</span><b>全 ${cur.stores} 店</b></div><div class="s-item"><span>掲載ステータス</span><b>撤去済</b></div></div>
+      <p class="page-sub" style="margin-top:18px;font-size:11.5px">※ 報告は掲載管理（Task Relay）へ反映され、商品（チケット）単位で「撤去済」となります。</p>
       <div class="actions" style="justify-content:center;margin-top:18px"><button class="btn btn-primary" id="back">申請一覧へ戻る</button></div>
     </div></div>`;
   $('#back').onclick=renderList;
